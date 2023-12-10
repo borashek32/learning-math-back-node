@@ -2,8 +2,8 @@ module.exports = class UserDto {
   email
   id
   isVerified
-  score
   role
+  score
 
   constructor(model) {
     this.email = model.email

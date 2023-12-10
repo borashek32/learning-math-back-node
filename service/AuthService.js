@@ -9,48 +9,26 @@ const UserDto = require('./../dtos/UserDto')
 const ApiError = require('../exceptions/ApiError')
 
 class AuthService {
-  async registration(email, password) {
-    const candidate = await UserModel.findOne({ email })
-    if (candidate) {
-      throw ApiError.BadRequest(`User with email ${email} already exists`)
-    }
-    const hashPassword = await bcrypt.hash(password, 5)
-    // const verificationLink = uuid.v4()
-    const user = await UserModel.create({ email, password: hashPassword })
-    // await MailService.sendVerificationLink(email, `${process.env.APP_URL}/api/verify/${verificationLink}`)
-
-    const userDto = new UserDto(user)
-    const tokens = TokenService.generateTokens({ ...userDto })
-    await TokenService.saveToken(userDto.id, tokens.refreshToken)
-    // const userRole = await RoleModel.findOne({ value: 'USER' })
-
-    return { ...tokens, user: { 
-      id: userDto.id, 
-      email: user.email, 
-      isVerified: user.isVerified, 
-      score: user.score,
-      role: user.role
-    }}
-  }
-
   async login(email, password) {
     const user = await UserModel.findOne({ email })
+
     if (!user) {
       throw ApiError.BadRequest('User not found')
     }
     const isPassEquals = await bcrypt.compare(password, user.password)
+
     if (!isPassEquals) {
       throw ApiError.BadRequest('User password not correct')
     }
     const userDto = new UserDto(user)
     const tokens = TokenService.generateTokens({ ...userDto })
+
     await TokenService.saveToken(userDto.id, tokens.refreshToken)
 
-    return { ...tokens, user: { id: userDto.id, email: user.email, isVerified: user.isVerified } }
+    return { ...tokens, user: { email: user.email, id: userDto.id, isVerified: user.isVerified } }
   }
 
   async logout(refreshToken) {
-    
     return TokenService.removeToken(refreshToken)
   }
 
@@ -67,9 +45,39 @@ class AuthService {
     const user = await UserModel.findById(userData.id)
     const userDto = new UserDto(user)
     const tokens = TokenService.generateTokens({ ...userDto })
+
     await TokenService.saveToken(userDto.id, tokens.refreshToken)
 
-    return { ...tokens, user: { id: userDto.id, email: user.email, isVerified: user.isVerified }}
+    return { ...tokens, user: { email: user.email, id: userDto.id, isVerified: user.isVerified } }
+  }
+
+  async registration(email, password) {
+    const candidate = await UserModel.findOne({ email })
+
+    if (candidate) {
+      throw ApiError.BadRequest(`User with email ${email} already exists`)
+    }
+    const hashPassword = await bcrypt.hash(password, 5)
+    // const verificationLink = uuid.v4()
+    const user = await UserModel.create({ email, password: hashPassword })
+    // await MailService.sendVerificationLink(email, `${process.env.APP_URL}/api/verify/${verificationLink}`)
+
+    const userDto = new UserDto(user)
+    const tokens = TokenService.generateTokens({ ...userDto })
+
+    await TokenService.saveToken(userDto.id, tokens.refreshToken)
+    // const userRole = await RoleModel.findOne({ value: 'USER' })
+
+    return {
+      ...tokens,
+      user: {
+        email: user.email,
+        id: userDto.id,
+        isVerified: user.isVerified,
+        role: user.role,
+        score: user.score,
+      },
+    }
   }
 }
 

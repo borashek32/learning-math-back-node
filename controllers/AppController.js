@@ -5,6 +5,7 @@ class AppController {
   async getUsers(req, res, next) {
     try {
       const users = await AppService.getAllUsers()
+
       return res.json(users)
     } catch (e) {
       next(e)
@@ -13,7 +14,7 @@ class AppController {
 
   async updateUserScore(req, res, next) {
     try {
-      const { userId, newScore } = req.body
+      const { newScore, userId } = req.body
       const result = await AppService.updateUserScore(userId, newScore)
 
       if (result.success) {
@@ -27,4 +28,4 @@ class AppController {
   }
 }
 
-module.exports = new AppController
+module.exports = new AppController()

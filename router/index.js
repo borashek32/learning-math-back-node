@@ -6,10 +6,12 @@ const { body } = require('express-validator')
 
 const router = new Router()
 
-router.post('/registration',
+router.post(
+  '/registration',
   body('email').isEmail(),
-  body('password').isLength({ min: 3, max: 9 }),
-  AuthController.registration)
+  body('password').isLength({ max: 9, min: 3 }),
+  AuthController.registration
+)
 router.post('/login', AuthController.login)
 router.post('/logout', AuthController.logout)
 router.get('/verify/:verificationLink', AuthController.verify)

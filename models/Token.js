@@ -1,8 +1,8 @@
 const { Schema, model } = require('mongoose')
 
 const Token = new Schema({
-	user: { type: Schema.Types.ObjectId, ref: 'User' },
-	refreshToken: { type: String, required: true }
+  refreshToken: { required: true, type: String },
+  user: { ref: 'User', type: Schema.Types.ObjectId },
 })
 
 module.exports = model('Token', Token)
