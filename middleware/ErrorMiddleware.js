@@ -1,7 +1,7 @@
 const ApiError = require('../exceptions/ApiError')
 
 module.exports = function (error, req, res, next) {
-  console.error(error) // Выводим ошибку в консоль для отладки
+  console.error(error.message)
 
   if (error instanceof ApiError) {
     return res.status(error.status).json({ errors: error.errors, message: error.message })

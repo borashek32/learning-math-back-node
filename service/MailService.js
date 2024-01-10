@@ -18,11 +18,11 @@ class MailService {
       from: process.env.SMTP_USER,
       html: `
         <div>
-          <h1>For verification of the account follow the link</h1>
+          <h1>For verification of your account follow the link</h1>
           <a href="${link}">${link}</a>
         </div>
       `,
-      subject: `Verify your account ${process.env.API_URL}`,
+      subject: `Verify your account ${process.env.CLIENT_URL}`,
       text: '',
       to,
     })

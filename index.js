@@ -8,10 +8,17 @@ const ErrorMiddleware = require('./middleware/ErrorMiddleware')
 
 const PORT = process.env.PORT || 5001
 
+const corsOptions = {
+  origin: '*', 
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionsSuccessStatus: 204, 
+}
+
 const app = express()
+app.use(cors(corsOptions))
 app.use(express.json())
 app.use(cookieParser())
-app.use(cors())
 app.use('/api', router)
 app.use(ErrorMiddleware)
 

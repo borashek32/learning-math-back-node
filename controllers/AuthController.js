@@ -51,29 +51,34 @@ class AuthController {
   async registration(req, res, next) {
     try {
       const errors = validationResult(req)
-
+  
       if (!errors.isEmpty()) {
         return next(ApiError.BadRequest('Validation error', errors.array()))
       }
+  
       const { email, password } = req.body
       const userData = await AuthService.registration(email, password)
-
+  
       res.cookie('refreshToken', userData.refreshToken, {
         httpOnly: true,
         maxAge: 30 * 24 * 60 * 60 * 1000,
       })
-
+  
       return res.json(userData)
     } catch (e) {
-      next(e)
+      console.error('Registration error:', e);
+      next(e);
     }
   }
 
   async verify(req, res) {
     try {
-      /* empty */
+      const verificationLink = req.params.verificationLink
+      await AuthService.verify(verificationLink)
+      return res.redirect(process.env.CLIENT_URL)
+
     } catch (e) {
-      //
+      console.log(e)
     }
   }
 }
