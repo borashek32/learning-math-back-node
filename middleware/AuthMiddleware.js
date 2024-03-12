@@ -1,27 +1,31 @@
 const TokenService = require('../service/TokenService')
+const ApiError = require('../exceptions/ApiError')
 
-module.exports = function (req, res, next) {
+module.exports = async function(req, res, next) {
   try {
-    const authorizationHeader = req.headers.authorization
+    const path = req.path.toLowerCase()
 
-    if (!authorizationHeader) {
-      return res.status(401).json({ message: 'Unauthorized' })
+    if (path === '/me' && !req.headers.authorization) {
+      delete req.user
+      return next()      
+    } else {
+      const authorizationHeader = req.headers.authorization
+      if (!authorizationHeader) {
+        return next(ApiError.UnauthorizedError())
+      }
+      const accessToken = authorizationHeader.split(' ')[1]
+      if (!accessToken) {
+        return next(ApiError.UnauthorizedError())
+      }
+      const userData = await TokenService.validateAccessToken(accessToken)
+      if (!userData && path === '/me') {
+        delete req.user
+      } else {
+        req.user = userData
+      }
+      next()
     }
-    const accessToken = authorizationHeader.split(' ')[1]
-
-    if (!accessToken) {
-      return res.status(401).json({ message: 'Unauthorized' })
-    }
-    const userData = TokenService.validateAccessToken(accessToken)
-
-    if (!userData) {
-      return res.status(401).json({ message: 'Unauthorized' })
-    }
-    req.user = userData
-    next()
   } catch (error) {
-    console.error('Error in Authorization Middleware:', error.message)
-
-    return res.status(401).json({ message: 'Unauthorized' })
+    return next(ApiError.UnauthorizedError())
   }
 }

@@ -1,15 +1,17 @@
 module.exports = class UserDto {
   email
-  id
+  _id
   isVerified
   role
-  score
+  avatarPath
+  avatarName
 
   constructor(model) {
     this.email = model.email
-    this.id = model._id
+    this._id = model._id
     this.isVerified = model.isVerified
-    this.score = model.score
     this.role = model.roles
+    this.avatarPath = model.avatarPath
+    this.avatarName = model.avatar
   }
 }

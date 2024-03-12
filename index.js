@@ -2,25 +2,42 @@ require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
+const session = require('express-session')
 const mongoose = require('mongoose')
+const passport = require('passport')
 const router = require('./router/index')
 const ErrorMiddleware = require('./middleware/ErrorMiddleware')
+const bcrypt = require('bcryptjs')
 
 const PORT = process.env.PORT || 5001
 
 const corsOptions = {
-  origin: '*', 
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  origin: 'http://localhost:3000',
   credentials: true,
-  optionsSuccessStatus: 204, 
 }
 
 const app = express()
+
+const secretKey = bcrypt.hash('learning-math.com', 5).toString('hex')
+app.use(session({
+  secret: secretKey,
+  resave: false,
+  saveUninitialized: false
+}))
 app.use(cors(corsOptions))
 app.use(express.json())
 app.use(cookieParser())
+
+app.use(passport.initialize())
+app.use(passport.session())
+
 app.use('/api', router)
 app.use(ErrorMiddleware)
+
+app.use((req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store')
+  next()
+})
 
 const start = async () => {
 	try {

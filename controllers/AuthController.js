@@ -1,16 +1,20 @@
 const AuthService = require('../service/AuthService')
 const { validationResult } = require('express-validator')
 const ApiError = require('../exceptions/ApiError')
+const TokenService = require('../service/TokenService')
+
 
 class AuthController {
   async login(req, res, next) {
     try {
-      const { email, password } = req.body
+      const { email, password, rememberMe } = req.body
       const userData = await AuthService.login(email, password)
+
+      const maxAge = rememberMe ? (30 * 24 * 60 * 60 * 1000) : 0
 
       res.cookie('refreshToken', userData.refreshToken, {
         httpOnly: true,
-        maxAge: 30 * 24 * 60 * 60 * 1000,
+        maxAge: maxAge,
       })
 
       return res.json(userData)
@@ -21,16 +25,20 @@ class AuthController {
 
   async logout(req, res, next) {
     try {
-      const { refreshToken } = req.body
-      const token = await AuthService.logout(refreshToken)
+      const { refreshToken, accessToken } = req.body
+      const message = await AuthService.logout(refreshToken, accessToken)
 
       res.clearCookie('refreshToken')
+      res.clearCookie('accessToken')
 
-      return res.json({ message: `Logout successful ${token}` })
+      delete req.headers.authorization
+      delete req.user
+      
+      return res.json({ message: 'Logout successfull' })
     } catch (e) {
       next(e)
     }
-  }
+}
 
   async refresh(req, res, next) {
     try {
@@ -64,21 +72,109 @@ class AuthController {
         maxAge: 30 * 24 * 60 * 60 * 1000,
       })
   
+      console.log(userData);
       return res.json(userData)
     } catch (e) {
-      console.error('Registration error:', e);
-      next(e);
+      console.error('Registration error:', e)
+      next(e)
     }
   }
 
-  async verify(req, res) {
+  async verify(req, res, next) {
     try {
       const verificationLink = req.params.verificationLink
       await AuthService.verify(verificationLink)
-      return res.redirect(process.env.CLIENT_URL)
 
+      return res.redirect(`${process.env.CLIENT_MOBILE_URL}/--/login`)
+      // return res.redirect(`${process.env.CLIENT_MOBILE_URL}/--/verify/${verificationLink}`)
     } catch (e) {
-      console.log(e)
+      return next(e)
+    }
+  }
+
+  async forgotPassword(req, res, next) {
+    try {
+      const email = req.body.email
+      const userEmail = await AuthService.forgotPassword(email)
+
+      if (userEmail) {
+        return res.json(`Check your email ${email}`)
+      } else {
+        return res.json('User email is not correct')
+      }
+    } catch (e) {
+      return next(e)
+    }
+  }
+
+  async createNewPassword(req, res, next) {
+    try {
+      const createNewPasswordLink = req.params.createNewPasswordLink
+      const email = req.params.email
+
+      return res.redirect(`${process.env.CLIENT_MOBILE_URL}/--/create-new-password/${createNewPasswordLink}/${email}`)
+    } catch(e) {
+      next(e)
+    }
+  }
+
+  async saveNewPassword(req, res, next) {
+    try {
+      const password = req.body.password
+      const email = req.body.email
+
+      const userData = await AuthService.saveNewPassword(email, password)
+  
+      res.cookie('refreshToken', userData.refreshToken, {
+        httpOnly: true,
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+      })
+  
+      return res.json(userData)
+    } catch(e) {
+      next(e)
+    }
+  }
+
+  async changePassword(req, res, next) {
+    try {
+      const { userId, password, newPassword } = req.body
+      const _id = userId
+      const user = await AuthService.changePassword(_id, password, newPassword)
+
+      if (user) {
+        res.json(user)
+      } else {
+        throw ApiError.BadRequest('User not found')
+      }
+    } catch(e) {
+      next(e)
+    }
+  }
+
+  async changeEmail(req, res, next) {
+    try {
+      const { userId, newEmail } = req.body
+      
+      const _id = userId
+      const user = await AuthService.changeEmail(_id, newEmail)
+
+      if (user) {
+        res.json(user)
+      } else {
+        throw ApiError.BadRequest('User not found')
+      }
+    } catch(e) {
+      next(e)
+    }
+  }
+
+  async me(req, res, next) {
+    try {
+
+      return res.json(req.user)
+    } catch (e) {
+      next(e)
     }
   }
 }

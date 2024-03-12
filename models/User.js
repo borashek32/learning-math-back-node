@@ -5,8 +5,10 @@ const User = new Schema({
   isVerified: { default: false, type: Boolean },
   password: { required: true, type: String },
   role: { default: 'USER', type: String },
-  score: { default: 0, type: Number },
   verificationLink: { type: String },
+  createNewPasswordLink: { type: String },
+  avatarPath: { default: '', type: String },
+  avatarName: { default: '', type: String }
 })
 
 module.exports = model('User', User)
