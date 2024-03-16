@@ -39,15 +39,17 @@ router.post(
 // kinda ready
 // auth
 router.post('/login', AuthController.login) // add remember me 
-router.post('/logout', AuthMiddleware, AuthController.logout)
 router.get('/verify/:verificationLink', AuthController.verify)
 router.post('/forgot-password', AuthController.forgotPassword)
 router.get('/create-new-password/:createNewPasswordLink/:email', AuthController.createNewPassword)
 router.post('/save-new-password', AuthController.saveNewPassword)
+
 router.post('/change-password', AuthMiddleware, AuthController.changePassword)
 router.post('/change-email', AuthMiddleware, AuthController.changeEmail)
-router.get('/refresh', AuthController.refresh)
 router.get('/me', AuthMiddleware, AuthController.me)
+router.post('/logout', AuthMiddleware, AuthController.logout)
+
+router.get('/refresh', AuthMiddleware, AuthController.refresh)
 
 // users - score
 router.get('/get-total-user-score/:userId', AuthMiddleware, UserController.getTotalUserScore)

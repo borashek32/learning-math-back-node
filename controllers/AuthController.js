@@ -10,12 +10,21 @@ class AuthController {
       const { email, password, rememberMe } = req.body
       const userData = await AuthService.login(email, password)
 
-      const maxAge = rememberMe ? (30 * 24 * 60 * 60 * 1000) : 0
+      // const maxAge = rememberMe ? (30 * 24 * 60 * 60 * 1000) : 0
+      const maxAge = (30 * 24 * 60 * 60 * 1000)
 
       res.cookie('refreshToken', userData.refreshToken, {
         httpOnly: true,
         maxAge: maxAge,
       })
+
+      // to look for refreshToken in cookies
+      // const headers = res.getHeaders()
+      // const setCookieHeader = headers['set-cookie']
+      // const cookies = setCookieHeader.split(';').map(cookie => cookie.trim())
+      // const refreshToken = cookies.find(cookie => cookie.startsWith('refreshToken='))
+
+      // console.log('Refresh Token:', refreshToken);
 
       return res.json(userData)
     } catch (e) {
@@ -38,11 +47,19 @@ class AuthController {
     } catch (e) {
       next(e)
     }
-}
+  }
 
   async refresh(req, res, next) {
     try {
-      const { refreshToken } = req.cookies
+      // to get refreshToken from cookies
+      const cookieHeader = req.headers.cookie
+      const cookies = cookieHeader.split(';').map(cookie => cookie.trim())
+      const refreshTokenCookie = cookies.find(cookie => cookie.startsWith('refreshToken='))
+      let refreshToken
+      if (refreshTokenCookie) {
+        refreshToken = refreshTokenCookie.split('=')[1]
+      }
+
       const userData = await AuthService.refresh(refreshToken)
 
       res.cookie('refreshToken', userData.refreshToken, {
@@ -51,7 +68,7 @@ class AuthController {
       })
 
       return res.json(userData)
-    } catch (e) {
+    } catch (e) { 
       next(e)
     }
   }
@@ -83,7 +100,7 @@ class AuthController {
   async verify(req, res, next) {
     try {
       const verificationLink = req.params.verificationLink
-      await AuthService.verify(verificationLink)
+      await AuthService.verify(verificationLink) 
 
       return res.redirect(`${process.env.CLIENT_MOBILE_URL}/--/login`)
       // return res.redirect(`${process.env.CLIENT_MOBILE_URL}/--/verify/${verificationLink}`)

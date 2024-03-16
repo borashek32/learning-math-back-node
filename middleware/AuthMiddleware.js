@@ -6,7 +6,7 @@ module.exports = async function(req, res, next) {
     const path = req.path.toLowerCase()
 
     if (path === '/me' && !req.headers.authorization) {
-      delete req.user
+      delete req.user 
       return next()      
     } else {
       const authorizationHeader = req.headers.authorization

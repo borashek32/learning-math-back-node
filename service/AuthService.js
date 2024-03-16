@@ -46,7 +46,7 @@ class AuthService {
         TokenService.removeToken(accessToken),
     ]);
     return 'Logout successful';
-}
+  }
 
   async refresh(refreshToken) {
     if (!refreshToken) {
@@ -58,13 +58,26 @@ class AuthService {
     if (!userData || !tokenFromDb) {
       throw ApiError.UnauthorizedError()
     }
-    const user = await UserModel.findById(userData.id)
+
+    const user = await UserModel.findById(userData._id)
     const userDto = new UserDto(user)
     const tokens = TokenService.generateTokens({ ...userDto })
 
-    await TokenService.saveToken(userDto.id, tokens.refreshToken)
+    await TokenService.saveToken(userDto._id, tokens.refreshToken)
 
-    return { ...tokens, user: { userDto } }
+    return {
+      ...tokens,
+      user: {
+        _id: userDto._id,
+        email: user.email,
+        isVerified: user.isVerified,
+        verificationLink: user.verificationLink,
+        role: user.role,
+        createNewPasswordLink: user.createNewPasswordLink,
+        avatarPath: user.avatarPath,
+        avatarName: user.avatarName
+      },
+    }
   }
 
   async registration(email, password) {
@@ -84,7 +97,7 @@ class AuthService {
     const userDto = new UserDto(user)
     const tokens = TokenService.generateTokens({ ...userDto })
 
-    await TokenService.saveToken(userDto.id, tokens.refreshToken)
+    await TokenService.saveToken(userDto._id, tokens.refreshToken)
     // const userRole = await RoleModel.findOne({ value: 'USER' })
 
     return {
