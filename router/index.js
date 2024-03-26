@@ -20,6 +20,10 @@ const authenticateToken = (req, res, next) => {
   })
 }
 
+router.get('/', (req, res) => {
+  res.send('Все работает')
+})
+
 router.post(
   '/registration',
   [
