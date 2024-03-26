@@ -1,4 +1,4 @@
-require('dotenv').config()
+// require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
@@ -13,7 +13,7 @@ const PORT = 3000
 
 const corsOptions = {
   origin: 'http://localhost:3000',
-  // credentials: true,
+  credentials: true,
 }
 
 const app = express()
