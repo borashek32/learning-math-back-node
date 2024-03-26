@@ -43,7 +43,7 @@ router.post(
       .isLength({ min: 4, max: 164 })
       .withMessage('Password must be between 4 and 164 characters.'),
   ],
-  AuthController.registration
+  allowCors(AuthController.registration)
 )
 
 // kinda ready
