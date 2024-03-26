@@ -49,7 +49,7 @@ router.post('/change-email', AuthMiddleware, AuthController.changeEmail)
 router.get('/me', AuthMiddleware, AuthController.me)
 router.post('/logout', AuthMiddleware, AuthController.logout)
 
-router.get('/refresh', AuthMiddleware, AuthController.refresh)
+router.get('/refresh', AuthController.refresh)
 
 // users - score
 router.get('/get-total-user-score/:userId', AuthMiddleware, UserController.getTotalUserScore)

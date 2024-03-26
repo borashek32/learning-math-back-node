@@ -12,6 +12,6 @@ module.exports = class UserDto {
     this.isVerified = model.isVerified
     this.role = model.roles
     this.avatarPath = model.avatarPath
-    this.avatarName = model.avatar
+    this.avatarName = model.avatarName
   }
 }

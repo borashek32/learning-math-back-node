@@ -9,6 +9,7 @@ module.exports = async function(req, res, next) {
       delete req.user 
       return next()      
     } else {
+      
       const authorizationHeader = req.headers.authorization
       if (!authorizationHeader) {
         return next(ApiError.UnauthorizedError())
@@ -17,8 +18,9 @@ module.exports = async function(req, res, next) {
       if (!accessToken) {
         return next(ApiError.UnauthorizedError())
       }
+
       const userData = await TokenService.validateAccessToken(accessToken)
-      if (!userData && path === '/me') {
+      if ((!userData && path === '/me')) {
         delete req.user
       } else {
         req.user = userData

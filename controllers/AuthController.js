@@ -25,7 +25,7 @@ class AuthController {
       // const refreshToken = cookies.find(cookie => cookie.startsWith('refreshToken='))
 
       // console.log('Refresh Token:', refreshToken);
-
+      console.log('login');
       return res.json(userData)
     } catch (e) {
       next(e)
@@ -38,10 +38,11 @@ class AuthController {
       const message = await AuthService.logout(refreshToken, accessToken)
 
       res.clearCookie('refreshToken')
-      res.clearCookie('accessToken')
 
       delete req.headers.authorization
       delete req.user
+
+      console.log('logout')
       
       return res.json({ message: 'Logout successfull' })
     } catch (e) {
@@ -66,7 +67,7 @@ class AuthController {
         httpOnly: true,
         maxAge: 30 * 24 * 60 * 60 * 1000,
       })
-
+console.log('ref');
       return res.json(userData)
     } catch (e) { 
       next(e)
@@ -188,7 +189,7 @@ class AuthController {
 
   async me(req, res, next) {
     try {
-
+      console.log('me');
       return res.json(req.user)
     } catch (e) {
       next(e)

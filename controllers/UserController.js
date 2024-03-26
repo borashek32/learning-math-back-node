@@ -1,6 +1,5 @@
 const UserService = require('../service/UserService')
 const ApiError = require('../exceptions/ApiError')
-const { log } = require('console')
 
 class UserController {
   async getUsers(req, res, next) {
@@ -25,6 +24,7 @@ class UserController {
   }
 
   async getTotalUserScore(req, res, next) {
+    console.log('getTotalUserScore');
     try {
       const { userId } = req.params
       const score = await UserService.getTotalUserScore(userId)
