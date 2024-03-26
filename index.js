@@ -9,7 +9,7 @@ const router = require('./router/index')
 const ErrorMiddleware = require('./middleware/ErrorMiddleware')
 const bcrypt = require('bcryptjs')
 
-const PORT = process.env.PORT || 5001
+const PORT = process.env.PORT || 3001
 
 const corsOptions = {
   origin: 'http://localhost:3000',
