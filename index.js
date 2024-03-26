@@ -1,4 +1,4 @@
-// // require('dotenv').config()
+// require('dotenv').config()
 // const express = require('express')
 // const cors = require('cors')
 // const cookieParser = require('cookie-parser')
@@ -61,7 +61,7 @@ const router = require('./router/index')
 const ErrorMiddleware = require('./middleware/ErrorMiddleware')
 const bcrypt = require('bcryptjs')
 
-const PORT = 3000
+const PORT = 7001
 
 const corsOptions = {
   origin: 'http://localhost:3000',

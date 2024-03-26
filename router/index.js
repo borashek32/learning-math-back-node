@@ -21,7 +21,7 @@ const authenticateToken = (req, res, next) => {
 }
 
 router.get('/', (req, res) => {
-  return 'Все работает'
+  res.status(200).json('Welcome, your app is working well')
 })
 
 router.post(
