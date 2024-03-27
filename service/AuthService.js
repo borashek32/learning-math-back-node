@@ -89,11 +89,11 @@ class AuthService {
     const hashPassword = await bcrypt.hash(password, 5)
     const verificationLink = uuid.v4()
     const user = await UserModel.create({ email, password: hashPassword, verificationLink })
-    await MailService.sendVerificationLink(
-      email,
-      // `${process.env.API_URL}/api/verify/${verificationLink}`
-      `${process.env.CLIENT_WEB_URL}/login`
-    )
+    // await MailService.sendVerificationLink(
+    //   email,
+    //   // `${process.env.API_URL}/api/verify/${verificationLink}`
+    //   `${process.env.CLIENT_WEB_URL}/login`
+    // )
 
     const userDto = new UserDto(user)
     const tokens = TokenService.generateTokens({ ...userDto })
