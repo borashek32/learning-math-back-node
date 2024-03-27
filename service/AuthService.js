@@ -91,7 +91,8 @@ class AuthService {
     const user = await UserModel.create({ email, password: hashPassword, verificationLink })
     await MailService.sendVerificationLink(
       email,
-      `${process.env.API_URL}/api/verify/${verificationLink}`
+      // `${process.env.API_URL}/api/verify/${verificationLink}`
+      `${process.env.CLIENT_WEB_URL}/login`
     )
 
     const userDto = new UserDto(user)

@@ -24,7 +24,9 @@ class MailService {
             <a href="#">Learn-math.com</a>
           </p>
           <p>For verification of your account follow the link</p>
-          <a href="${verificationLink}">${verificationLink}</a>
+          <a href="${verificationLink}">
+            <button>Verify your account and login</button>
+          </a>
         </div>
       `,
       text: '',

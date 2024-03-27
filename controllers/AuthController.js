@@ -90,7 +90,6 @@ console.log('ref');
         maxAge: 30 * 24 * 60 * 60 * 1000,
       })
   
-      console.log(userData);
       return res.json(userData)
     } catch (e) {
       console.error('Registration error:', e)
