@@ -39,7 +39,7 @@ const start = async () => {
 		await mongoose.connect(process.env.DB_URL)
 		app.listen(PORT, () => console.log(`server started ${PORT}`))
 	} catch(e) {
-		console.log(e)
+		console.log('error from the first index.js', e)
 	}
 }
 
