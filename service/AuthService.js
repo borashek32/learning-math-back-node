@@ -92,11 +92,11 @@ class AuthService {
     const user = await UserModel.create({ email, password: hashPassword, verificationLink })
 
     // vercel doesn't send letters idk why stupid vercel ok
-    // await MailService.sendVerificationLink(
-    //   email,
-    //   `${process.env.API_URL}/api/verify/${verificationLink}`
-    //   // `${process.env.CLIENT_WEB_URL}/login`
-    // )
+    await MailService.sendVerificationLink(
+      email,
+      // `${process.env.API_URL}/api/verify/${verificationLink}`
+      `${process.env.CLIENT_WEB_URL}/login`
+    )
 
     const userDto = new UserDto(user)
     const tokens = TokenService.generateTokens({ ...userDto })
