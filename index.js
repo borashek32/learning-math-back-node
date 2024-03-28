@@ -12,8 +12,8 @@ const bcrypt = require('bcryptjs')
 const PORT = 7001
 
 const corsOptions = {
-  // origin: 'http://localhost:3000',
-  origin: 'https://learning-math-front-react.vercel.app',
+  origin: 'http://localhost:3000',
+  // origin: 'https://learning-math-front-react.vercel.app',
   credentials: true,
 }
 
