@@ -94,8 +94,9 @@ class AuthService {
     // vercel doesn't send letters idk why stupid vercel 
     await MailService.sendVerificationLink(
       email,
+      verificationLink
       // `${process.env.API_URL}/api/verify/${verificationLink}`
-      `${process.env.CLIENT_WEB_URL}/login`
+      // `${process.env.CLIENT_WEB_URL}/login`
     )
 
     const userDto = new UserDto(user)
