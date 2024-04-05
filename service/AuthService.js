@@ -91,7 +91,7 @@ class AuthService {
     const verificationLink = uuid.v4()
     const user = await UserModel.create({ email, password: hashPassword, verificationLink })
 
-    // vercel doesn't send letters idk why stupid vercel ok
+    // vercel doesn't send letters idk why stupid vercel 
     await MailService.sendVerificationLink(
       email,
       // `${process.env.API_URL}/api/verify/${verificationLink}`

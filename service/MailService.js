@@ -14,24 +14,30 @@ class MailService {
   }
 
   async sendVerificationLink(to, verificationLink) {
-    await this.transporter.sendMail({
-      from: process.env.SMTP_USER,
-      subject: `Verify your account ${process.env.CLIENT_MOBILE_URL}`,
-      html: `
-        <div>
-          <p>
-            You successfully registered on 
-            <a href="#">Learn-math.com</a>
-          </p>
-          <p>For verification of your account follow the link</p>
-          <a href="${verificationLink}">
-            <button>Verify your account and login</button>
-          </a>
-        </div>
-      `,
-      text: '',
-      to,
+    await resend.emails.send({
+      from: 'you@example.com',
+      to: to,
+      subject: 'hello world',
+      html: `<strong>{verificationLink}</strong>`,
     })
+    // await this.transporter.sendMail({
+    //   from: process.env.SMTP_USER,
+    //   subject: `Verify your account ${process.env.CLIENT_MOBILE_URL}`,
+    //   html: `
+    //     <div>
+    //       <p>
+    //         You successfully registered on 
+    //         <a href="#">Learn-math.com</a>
+    //       </p>
+    //       <p>For verification of your account follow the link</p>
+    //       <a href="${verificationLink}">
+    //         <button>Verify your account and login</button>
+    //       </a>
+    //     </div>
+    //   `,
+    //   text: '',
+    //   to,
+    // })
   }
 
   async sendConfirmationLetter(to, user) {
