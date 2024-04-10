@@ -1,5 +1,6 @@
 const UserModel = require('../models/User')
 const RoleModel = require('../models/Role')
+const TokenModel = require('../models/Token')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const uuid = require('uuid')
@@ -7,13 +8,14 @@ const MailService = require('./MailService')
 const TokenService = require('./TokenService')
 const UserDto = require('./../dtos/UserDto')
 const ApiError = require('../exceptions/ApiError')
+const { ObjectId } = require('mongodb')
 
 class AuthService {
   async login(email, password) {
     const user = await UserModel.findOne({ email })
 
     if (!user) {
-      throw ApiError.BadRequest('User not found')
+      throw ApiError.BadRequest('login User not found')
     }
     const isPassEquals = await bcrypt.compare(password, user.password)
 
@@ -22,22 +24,12 @@ class AuthService {
     }
     const userDto = new UserDto(user)
     const tokens = TokenService.generateTokens({ ...userDto })
-    console.log(userDto, tokens);
 
-    await TokenService.saveToken(userDto.id, tokens.refreshToken)
+    await TokenService.saveToken(userDto._id, tokens.refreshToken, tokens.accessToken)
 
     return { 
       ...tokens, 
-      user: {
-        _id: userDto._id,
-        email: user.email,
-        isVerified: user.isVerified,
-        verificationLink: user.verificationLink,
-        role: user.role,
-        createNewPasswordLink: user.createNewPasswordLink,
-        avatarPath: user.avatarPath,
-        avatarName: user.avatarName
-      },
+      user: userDto,
     }
   }
 
@@ -92,31 +84,22 @@ class AuthService {
     const user = await UserModel.create({ email, password: hashPassword, verificationLink })
 
     // vercel doesn't send letters idk why stupid vercel 
-    await MailService.sendVerificationLink(
-      email,
-      verificationLink
-      // `${process.env.API_URL}/api/verify/${verificationLink}`
-      // `${process.env.CLIENT_WEB_URL}/login`
-    )
+    // await MailService.sendVerificationLink(
+    //   email,
+    //   verificationLink
+    //   // `${process.env.API_URL}/api/verify/${verificationLink}`
+    //   // `${process.env.CLIENT_WEB_URL}/login`
+    // )
 
     const userDto = new UserDto(user)
     const tokens = TokenService.generateTokens({ ...userDto })
 
-    await TokenService.saveToken(userDto._id, tokens.refreshToken)
+    await TokenService.saveToken(userDto._id, tokens.refreshToken, tokens.accessToken)
     // const userRole = await RoleModel.findOne({ value: 'USER' })
 
     return {
       ...tokens,
-      user: {
-        _id: userDto._id,
-        email: user.email,
-        isVerified: user.isVerified,
-        verificationLink: user.verificationLink,
-        role: user.role,
-        createNewPasswordLink: user.createNewPasswordLink,
-        avatarPath: user.avatarPath,
-        avatarName: user.avatarName
-      },
+      user: userDto,
     }
   }
 
@@ -205,15 +188,30 @@ class AuthService {
     return userDto
   }
 
-  async me(userId) {
-    const user = await UserModel.findOne({ _id: userId })
-
-    if (user) {
-      return user
-    } else {
-      throw ApiError.BadRequest('User not found')
+  async me(accessToken) {
+    try {
+      // Ожидаем завершения запроса к базе данных
+      const userTokenModel = await TokenModel.findOne({ accessToken });
+      if (!userTokenModel) {
+        throw ApiError.BadRequest('User not found')
+      }
+  
+      const objectId = userTokenModel._id
+      const _id = objectId.toString()
+  
+      // Ищем пользователя по _id
+      const user = await UserModel.findOne({ _id })
+  
+      if (user) {
+        return user;
+      } else {
+        throw ApiError.BadRequest('User not found')
+      }
+    } catch (error) {
+      // throw ApiError.InternalServerError(error.message);
     }
   }
+  
 }
 
 module.exports = new AuthService()

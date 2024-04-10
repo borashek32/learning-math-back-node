@@ -2,6 +2,7 @@ const AuthService = require('../service/AuthService')
 const { validationResult } = require('express-validator')
 const ApiError = require('../exceptions/ApiError')
 const TokenService = require('../service/TokenService')
+const passport = require('passport')
 
 
 class AuthController {
@@ -25,7 +26,6 @@ class AuthController {
       // const refreshToken = cookies.find(cookie => cookie.startsWith('refreshToken='))
 
       // console.log('Refresh Token:', refreshToken);
-      console.log('login');
       return res.json(userData)
     } catch (e) {
       next(e)
@@ -67,7 +67,6 @@ class AuthController {
         httpOnly: true,
         maxAge: 30 * 24 * 60 * 60 * 1000,
       })
-console.log('ref');
       return res.json(userData)
     } catch (e) { 
       next(e)
@@ -85,10 +84,10 @@ console.log('ref');
       const { email, password } = req.body
       const userData = await AuthService.registration(email, password)
   
-      res.cookie('refreshToken', userData.refreshToken, {
-        httpOnly: true,
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-      })
+      // res.cookie('refreshToken', userData.refreshToken, {
+      //   httpOnly: true,
+      //   maxAge: 30 * 24 * 60 * 60 * 1000,
+      // })
   
       return res.json(userData)
     } catch (e) {
@@ -186,14 +185,29 @@ console.log('ref');
     }
   }
 
+  // async me(req, res, next) {
+  //   try {
+  //     if (!req.user || !req.headers.authorization) {
+  //       delete req.user 
+  //     }
+  //     console.log('me', res.json(req.user));
+  //     return res.json(req.user)
+  //   } catch (e) {
+  //     next(e)
+  //   }
+  // }
   async me(req, res, next) {
     try {
-      console.log('me');
-      return res.json(req.user)
+      const token = req.headers.authorization
+      const accessToken = token.split(' ')[1]
+      const user = await AuthService.me(accessToken)
+
+      return res.json(user)
     } catch (e) {
-      next(e)
+      next(e);
     }
   }
 }
+
 
 module.exports = new AuthController()

@@ -40,28 +40,26 @@ router.post(
   AuthController.registration
 )
 
-// kinda ready
 // auth
 router.post('/login', AuthController.login) // add remember me 
-router.get('/verify/:verificationLink', AuthController.verify)
-router.post('/forgot-password', AuthController.forgotPassword)
-router.get('/create-new-password/:createNewPasswordLink/:email', AuthController.createNewPassword)
-router.post('/save-new-password', AuthController.saveNewPassword)
+// router.get('/verify/:verificationLink', AuthController.verify)
+// router.post('/forgot-password', AuthController.forgotPassword)
+// router.get('/create-new-password/:createNewPasswordLink/:email', AuthController.createNewPassword)
+// router.post('/save-new-password', AuthController.saveNewPassword)
 
-router.post('/change-password', AuthMiddleware, AuthController.changePassword)
-router.post('/change-email', AuthMiddleware, AuthController.changeEmail)
-router.get('/me', AuthMiddleware, AuthController.me)
+// router.post('/change-password', AuthMiddleware, AuthController.changePassword)
+// router.post('/change-email', AuthMiddleware, AuthController.changeEmail)
+router.get('/me', AuthController.me)
 router.post('/logout', AuthMiddleware, AuthController.logout)
 
-router.get('/refresh', AuthController.refresh)
+// router.get('/refresh', AuthController.refresh)
 
-// users - score
+// profile
 router.get('/get-total-user-score/:userId', AuthMiddleware, UserController.getTotalUserScore)
 router.post('/update-user-score', AuthMiddleware, UserController.updateUserScore)
 router.post('/update-user-avatar', AuthMiddleware, UserController.updateUserAvatar)
-// to do
 
 // to check
-router.get('/users', AuthMiddleware, UserController.getUsers)
+// router.get('/users', AuthMiddleware, UserController.getUsers)
 
 module.exports = router

@@ -24,7 +24,6 @@ class UserController {
   }
 
   async getTotalUserScore(req, res, next) {
-    console.log('getTotalUserScore');
     try {
       const { userId } = req.params
       const score = await UserService.getTotalUserScore(userId)
