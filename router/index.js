@@ -49,10 +49,10 @@ router.post('/login', AuthController.login) // add remember me
 
 // router.post('/change-password', AuthMiddleware, AuthController.changePassword)
 // router.post('/change-email', AuthMiddleware, AuthController.changeEmail)
-router.get('/me', AuthController.me)
+router.get('/me', AuthMiddleware, AuthController.me)
 router.post('/logout', AuthMiddleware, AuthController.logout)
 
-// router.get('/refresh', AuthController.refresh)
+router.get('/refresh', AuthController.refresh)
 
 // profile
 router.get('/get-total-user-score/:userId', AuthMiddleware, UserController.getTotalUserScore)

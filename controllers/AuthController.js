@@ -10,6 +10,7 @@ class AuthController {
     try {
       const { email, password, rememberMe } = req.body
       const userData = await AuthService.login(email, password)
+      console.log('login');
 
       // const maxAge = rememberMe ? (30 * 24 * 60 * 60 * 1000) : 0
       const maxAge = (30 * 24 * 60 * 60 * 1000)
@@ -34,8 +35,8 @@ class AuthController {
 
   async logout(req, res, next) {
     try {
-      const { refreshToken, accessToken } = req.body
-      const message = await AuthService.logout(refreshToken, accessToken)
+      const { accessToken } = req.body
+      const message = await AuthService.logout(accessToken)
 
       res.clearCookie('refreshToken')
 
@@ -56,6 +57,7 @@ class AuthController {
       const cookieHeader = req.headers.cookie
       const cookies = cookieHeader.split(';').map(cookie => cookie.trim())
       const refreshTokenCookie = cookies.find(cookie => cookie.startsWith('refreshToken='))
+
       let refreshToken
       if (refreshTokenCookie) {
         refreshToken = refreshTokenCookie.split('=')[1]
@@ -67,6 +69,7 @@ class AuthController {
         httpOnly: true,
         maxAge: 30 * 24 * 60 * 60 * 1000,
       })
+
       return res.json(userData)
     } catch (e) { 
       next(e)
@@ -185,17 +188,6 @@ class AuthController {
     }
   }
 
-  // async me(req, res, next) {
-  //   try {
-  //     if (!req.user || !req.headers.authorization) {
-  //       delete req.user 
-  //     }
-  //     console.log('me', res.json(req.user));
-  //     return res.json(req.user)
-  //   } catch (e) {
-  //     next(e)
-  //   }
-  // }
   async me(req, res, next) {
     try {
       const token = req.headers.authorization
