@@ -33,11 +33,9 @@ class AuthService {
     }
   }
 
-  async logout(refreshToken, accessToken) {
-    await Promise.all([
-        TokenService.removeToken(refreshToken),
-        TokenService.removeToken(accessToken),
-    ]);
+  async logout(accessToken) {
+    TokenService.removeToken(accessToken)
+
     return 'Logout successful';
   }
 
@@ -46,9 +44,9 @@ class AuthService {
       throw ApiError.UnauthorizedError()
     }
     const userData = TokenService.validateRefreshToken(refreshToken)
-    const tokenFromDb = await TokenService.findToken(refreshToken)
+    // const tokenFromDb = await TokenService.findToken(refreshToken)
 
-    if (!userData || !tokenFromDb) {
+    if (!userData) {
       throw ApiError.UnauthorizedError()
     }
 
@@ -56,20 +54,11 @@ class AuthService {
     const userDto = new UserDto(user)
     const tokens = TokenService.generateTokens({ ...userDto })
 
-    await TokenService.saveToken(userDto._id, tokens.refreshToken)
+    await TokenService.saveToken(userDto._id, tokens.refreshToken, tokens.accessToken)
 
     return {
       ...tokens,
-      user: {
-        _id: userDto._id,
-        email: user.email,
-        isVerified: user.isVerified,
-        verificationLink: user.verificationLink,
-        role: user.role,
-        createNewPasswordLink: user.createNewPasswordLink,
-        avatarPath: user.avatarPath,
-        avatarName: user.avatarName
-      },
+      user: userDto
     }
   }
 
@@ -92,6 +81,7 @@ class AuthService {
     // )
 
     const userDto = new UserDto(user)
+    console.log('AuthService register', userDto);
     const tokens = TokenService.generateTokens({ ...userDto })
 
     await TokenService.saveToken(userDto._id, tokens.refreshToken, tokens.accessToken)
