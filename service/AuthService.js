@@ -201,7 +201,6 @@ class AuthService {
       // throw ApiError.InternalServerError(error.message);
     }
   }
-  
 }
 
 module.exports = new AuthService()
