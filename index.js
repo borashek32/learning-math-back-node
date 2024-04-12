@@ -1,4 +1,4 @@
-// require('dotenv').config() // always change this line for prod
+require('dotenv').config() // always change this line for prod
 const express = require('express')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
@@ -10,12 +10,13 @@ const ErrorMiddleware = require('./middleware/ErrorMiddleware')
 const bcrypt = require('bcryptjs')
 const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt')
 const User = require('./models/User')
+const path = require('path')
 
 const PORT = 7001
 
 const corsOptions = {
-  // origin: 'http://localhost:3000',
-  origin: 'https://learning-math-front-react.vercel.app',
+  origin: 'http://localhost:3000',
+  // origin: 'https://learning-math-front-react.vercel.app',
   credentials: true,
 }
 
@@ -26,6 +27,9 @@ const jwtOptions = {
 };
 
 const app = express()
+
+app.set('view engine', 'ejs')
+app.set('views', path.join(__dirname, 'views'))
 
 app.use(cors(corsOptions))
 const secretKey = bcrypt.hash('learning-math.com', 5).toString('hex')
