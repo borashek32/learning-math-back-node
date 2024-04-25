@@ -1,4 +1,4 @@
-// require('dotenv').config() // always change this line for prod
+require('dotenv').config() // always change this line for prod
 const express = require('express')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
@@ -12,18 +12,17 @@ const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt')
 const User = require('./models/User')
 const path = require('path')
 
-const PORT = 7001
+const PORT = process.env.PORT || 3000
 
 const corsOptions = {
-  // origin: 'http://localhost:3000',
-  origin: 'https://learning-math-front-react.vercel.app',
+  origin: process.env.CLIENT_WEB_URL,
   credentials: true,
 }
 
 const secretKeyJwt = bcrypt.hash('learning-math.com', 5).toString('hex')
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: secretKeyJwt // Замените на свой секретный ключ для подписи и верификации токенов JWT
+  secretOrKey: secretKeyJwt
 };
 
 const app = express()
@@ -34,8 +33,8 @@ app.set('views', path.join(__dirname, 'views'))
 app.use(cors(corsOptions))
 const secretKey = bcrypt.hash('learning-math.com', 5).toString('hex')
 app.use(session({
-  secret: secretKey,
   resave: false,
+  secret: secretKey,
   saveUninitialized: false
 }))
 app.use(express.json())
@@ -46,19 +45,6 @@ app.use(passport.session())
 
 app.use('/api', router)
 app.use(ErrorMiddleware)
-
-passport.use(new JwtStrategy(jwtOptions, async (payload, done) => {
-  try {
-    // Ищем пользователя по идентификатору, который содержится в payload
-    const user = await User.findById(payload.id);
-    if (!user) {
-      return done(null, false); // Пользователь не найден
-    }
-    return done(null, user); // Пользователь найден и передается в следующий middleware
-  } catch (error) {
-    return done(error, false); // Возникла ошибка при поиске пользователя
-  }
-}));
 
 const start = async () => {
 	try {
