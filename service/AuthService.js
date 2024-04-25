@@ -179,7 +179,6 @@ class AuthService {
 
   async me(accessToken) {
     try {
-      // Ожидаем завершения запроса к базе данных
       const userTokenModel = await TokenModel.findOne({ accessToken });
       if (!userTokenModel) {
         throw ApiError.BadRequest('User not found')
@@ -188,7 +187,6 @@ class AuthService {
       const objectId = userTokenModel._id
       const _id = objectId.toString()
   
-      // Ищем пользователя по _id
       const user = await UserModel.findOne({ _id })
   
       if (user) {
@@ -197,7 +195,7 @@ class AuthService {
         throw ApiError.BadRequest('User not found')
       }
     } catch (error) {
-      // throw ApiError.InternalServerError(error.message);
+      return next(ApiError.UnauthorizedError())
     }
   }
 }
