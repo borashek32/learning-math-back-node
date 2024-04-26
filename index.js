@@ -16,14 +16,12 @@ const PORT = process.env.PORT || 3000
 
 const corsOptions = {
   origin: process.env.CLIENT_WEB_URL,
-  origin: process.env.CLIENT_WEB_URL,
   credentials: true,
 }
 
 const secretKeyJwt = bcrypt.hash('learning-math.com', 5).toString('hex')
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: secretKeyJwt 
   secretOrKey: secretKeyJwt
 };
 
