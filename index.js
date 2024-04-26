@@ -10,35 +10,30 @@ const ErrorMiddleware = require('./middleware/ErrorMiddleware')
 const bcrypt = require('bcryptjs')
 const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt')
 const User = require('./models/User')
-const path = require('path')
 
-const PORT = process.env.PORT || 3000
-
-const app = express()
+const PORT = 7001
 
 const corsOptions = {
-  origin: "*",
+  // origin: 'http://localhost:3000',
+  origin: 'https://learning-math-front-react.vercel.app',
   credentials: true,
 }
 
 const secretKeyJwt = bcrypt.hash('learning-math.com', 5).toString('hex')
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: secretKeyJwt
+  secretOrKey: secretKeyJwt // Замените на свой секретный ключ для подписи и верификации токенов JWT
 };
 
+const app = express()
+
 app.use(cors(corsOptions))
-
-app.set('view engine', 'ejs')
-app.set('views', path.join(__dirname, 'views'))
-
 const secretKey = bcrypt.hash('learning-math.com', 5).toString('hex')
 app.use(session({
-  resave: false,
   secret: secretKey,
+  resave: false,
   saveUninitialized: false
 }))
-
 app.use(express.json())
 app.use(cookieParser())
 
@@ -47,6 +42,19 @@ app.use(passport.session())
 
 app.use('/api', router)
 app.use(ErrorMiddleware)
+
+passport.use(new JwtStrategy(jwtOptions, async (payload, done) => {
+  try {
+    // Ищем пользователя по идентификатору, который содержится в payload
+    const user = await User.findById(payload.id);
+    if (!user) {
+      return done(null, false); // Пользователь не найден
+    }
+    return done(null, user); // Пользователь найден и передается в следующий middleware
+  } catch (error) {
+    return done(error, false); // Возникла ошибка при поиске пользователя
+  }
+}));
 
 const start = async () => {
 	try {
