@@ -1,4 +1,4 @@
-require('dotenv').config() // always change this line for prod
+// require('dotenv').config() // always change this line for prod
 const express = require('express')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
