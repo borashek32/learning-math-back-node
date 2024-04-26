@@ -24,10 +24,10 @@ const app = express()
 //   next();
 // })
 
-// const corsOptions = {
-//   origin: process.env.CLIENT_WEB_URL,
-//   credentials: true,
-// }
+const corsOptions = {
+  origin: process.env.CLIENT_WEB_URL,
+  credentials: true,
+}
 
 const secretKeyJwt = bcrypt.hash('learning-math.com', 5).toString('hex')
 const jwtOptions = {
@@ -35,7 +35,7 @@ const jwtOptions = {
   secretOrKey: secretKeyJwt
 };
 
-app.use(cors())
+app.use(cors(corsOptions))
 
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
