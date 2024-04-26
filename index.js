@@ -1,4 +1,4 @@
-// require('dotenv').config() // always change this line for prod
+require('dotenv').config() // always change this line for prod
 const express = require('express')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
@@ -12,14 +12,14 @@ const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt')
 const User = require('./models/User')
 const path = require('path')
 
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT
+
+const app = express()
 
 const corsOptions = {
   origin: process.env.CLIENT_WEB_URL,
   credentials: true,
 }
-
-app.use(cors(corsOptions))
 
 const secretKeyJwt = bcrypt.hash('learning-math.com', 5).toString('hex')
 const jwtOptions = {
@@ -27,11 +27,10 @@ const jwtOptions = {
   secretOrKey: secretKeyJwt
 };
 
-const app = express()
+app.use(cors(corsOptions))
 
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
-
 
 const secretKey = bcrypt.hash('learning-math.com', 5).toString('hex')
 app.use(session({
