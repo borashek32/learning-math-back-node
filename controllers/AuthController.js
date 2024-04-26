@@ -194,7 +194,11 @@ class AuthController {
       const accessToken = token.split(' ')[1]
       const user = await AuthService.me(accessToken)
 
-      return res.json(user)
+      if (user) {
+        return res.json(user)
+      } else {
+        return ApiError.UnauthorizedError()
+      }
     } catch (e) {
       next(e);
     }
