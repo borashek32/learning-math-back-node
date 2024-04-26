@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 3000
 const app = express()
 
 const corsOptions = {
-  origin: process.env.CLIENT_WEB_URL,
+  origin: "https://learning-math-front-react.vercel.app/",
   credentials: true,
 }
 
