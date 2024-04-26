@@ -22,6 +22,7 @@ module.exports = async function(req, res, next) {
     const userData = await TokenService.validateAccessToken(accessToken)
     next()
   } catch (error) {
+    console.log('UnauthorizedError')
     return next(ApiError.UnauthorizedError())
   }
 }
