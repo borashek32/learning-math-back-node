@@ -17,10 +17,8 @@ const PORT = process.env.PORT || 3000
 const app = express()
 
 const corsOptions = {
-  origin: "https://learning-math-front-react.vercel.app/",
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  origin: "*",
   credentials: true,
-  methods: '*',
 }
 
 const secretKeyJwt = bcrypt.hash('learning-math.com', 5).toString('hex')
