@@ -17,12 +17,12 @@ const PORT = process.env.PORT || 3000
 const app = express()
 
 
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', 'https://learning-math-front-react.vercel.app');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  next();
-})
+// app.use((req, res, next) => {
+//   res.setHeader('Access-Control-Allow-Origin', 'https://learning-math-front-react.vercel.app');
+//   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+//   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+//   next();
+// })
 
 // const corsOptions = {
 //   origin: process.env.CLIENT_WEB_URL,
@@ -35,7 +35,7 @@ const jwtOptions = {
   secretOrKey: secretKeyJwt
 };
 
-// app.use(cors(corsOptions))
+app.use(cors())
 
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
