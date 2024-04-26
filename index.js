@@ -10,10 +10,12 @@ const ErrorMiddleware = require('./middleware/ErrorMiddleware')
 const bcrypt = require('bcryptjs')
 const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt')
 const User = require('./models/User')
+const path = require('path')
 
-const PORT = 7001
+const PORT = process.env.PORT || 3000
 
 const corsOptions = {
+  origin: process.env.CLIENT_WEB_URL,
   origin: process.env.CLIENT_WEB_URL,
   credentials: true,
 }
@@ -22,16 +24,20 @@ const secretKeyJwt = bcrypt.hash('learning-math.com', 5).toString('hex')
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: secretKeyJwt 
+  secretOrKey: secretKeyJwt
 };
 
 const app = express()
+
+app.set('view engine', 'ejs')
+app.set('views', path.join(__dirname, 'views'))
 
 app.use(cors(corsOptions))
 
 const secretKey = bcrypt.hash('learning-math.com', 5).toString('hex')
 app.use(session({
-  secret: secretKey,
   resave: false,
+  secret: secretKey,
   saveUninitialized: false
 }))
 

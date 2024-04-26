@@ -10,7 +10,6 @@ class AuthController {
     try {
       const { email, password, rememberMe } = req.body
       const userData = await AuthService.login(email, password)
-      console.log('login');
 
       // const maxAge = rememberMe ? (30 * 24 * 60 * 60 * 1000) : 0
       const maxAge = (30 * 24 * 60 * 60 * 1000)
@@ -40,12 +39,10 @@ class AuthController {
 
       res.clearCookie('refreshToken')
 
-      delete req.headers.authorization
-      delete req.user
-
-      console.log('logout')
+      // delete req.headers.authorization
+      // delete req.user
       
-      return res.json({ message: 'Logout successfull' })
+      return res.json({ message: 'Logout successful' })
     } catch (e) {
       next(e)
     }
@@ -194,7 +191,11 @@ class AuthController {
       const accessToken = token.split(' ')[1]
       const user = await AuthService.me(accessToken)
 
-      return res.json(user)
+      if (user) {
+        return res.json(user)
+      } else {
+        return ApiError.UnauthorizedError()
+      }
     } catch (e) {
       next(e);
     }

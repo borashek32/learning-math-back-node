@@ -16,7 +16,7 @@ class UserController {
     try {
       const { userId, score, date } = req.body
       const result = await UserService.updateUserScore(userId, score, date)
-
+      
       return res.json(result)
     } catch (e) {
       next(e)
