@@ -28,6 +28,11 @@ const jwtOptions = {
 const app = express()
 
 app.use(cors(corsOptions))
+app.use(session({
+  secret: 'learning-math.com',
+  resave: false,
+  saveUninitialized: false
+}))
 app.use(express.json())
 app.use(cookieParser())
 
