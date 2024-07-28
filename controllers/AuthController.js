@@ -9,8 +9,9 @@ class AuthController {
   async login(req, res, next) {
     try {
       const { email, password, rememberMe } = req.body
+      console.log('login', email, password, rememberMe);
       const userData = await AuthService.login(email, password)
-      console.log('login', email, passport, rememberMe);
+      console.log('login', email, password, rememberMe);
 
       // const maxAge = rememberMe ? (30 * 24 * 60 * 60 * 1000) : 0
       const maxAge = (30 * 24 * 60 * 60 * 1000)
@@ -79,7 +80,7 @@ class AuthController {
       const errors = validationResult(req)
   
       if (!errors.isEmpty()) {
-        return next(ApiError.BadRequest('Validation error', errors.array()))
+        return next(ApiError.BadRequest('Validation error', errors))
       }
   
       const { email, password } = req.body

@@ -13,6 +13,7 @@ const { ObjectId } = require('mongodb')
 class AuthService {
   async login(email, password) {
     const user = await UserModel.findOne({ email })
+    console.log(email)
 
     if (!user) {
       throw ApiError.BadRequest('login User not found')
