@@ -28,11 +28,6 @@ const jwtOptions = {
 const app = express()
 
 app.use(cors(corsOptions))
-app.use(session({
-  secret: secretKey,
-  resave: false,
-  saveUninitialized: false
-}))
 app.use(express.json())
 app.use(cookieParser())
 
