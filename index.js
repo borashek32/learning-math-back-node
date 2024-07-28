@@ -28,7 +28,6 @@ const jwtOptions = {
 const app = express()
 
 app.use(cors(corsOptions))
-const secretKey = bcrypt.hash('learning-math.com', 5).toString('hex')
 app.use(session({
   secret: secretKey,
   resave: false,
