@@ -19,7 +19,8 @@ const corsOptions = {
   credentials: true,
 }
 
-const secretKeyJwt = bcrypt.hash('learning-math.com', 5).toString('hex')
+// const secretKeyJwt = bcrypt.hash('learning-math.com', 5).toString('hex')
+const secretKeyJwt = 'learning-math.com'
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: secretKeyJwt // Замените на свой секретный ключ для подписи и верификации токенов JWT
