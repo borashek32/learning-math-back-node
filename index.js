@@ -8,7 +8,7 @@ const passport = require('passport')
 const router = require('./router/index')
 const ErrorMiddleware = require('./middleware/ErrorMiddleware')
 const bcrypt = require('bcryptjs')
-const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt')
+const { ExtractJwt, Strategy: JwtStrategy } = require('passport-jwt')
 const User = require('./models/User')
 
 const PORT = 7001
