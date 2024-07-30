@@ -1,22 +1,8 @@
-// module.exports = class ScoreDto {
-//   userId;
-//   id;
-//   score;
-//   date;
-
-//   constructor(model) {
-//     this.userId = model.userId;
-//     this.id = model._id;
-//     this.score = model.score;
-//     this.date = model.date;
-//   }
-// };
-
-module.exports = class ScoreDto {
+export default class ScoreDto {
   constructor(model) {
     this.userId = model.userId;
     this.id = model._id;
     this.score = model.score;
     this.date = model.date;
   }
-};
+}

@@ -1,14 +1,18 @@
-const { Schema, model } = require("mongoose");
+import mongoose from 'mongoose';
 
-const User = new Schema({
+const { Schema, model } = mongoose;
+
+const userSchema = new Schema({
   email: { required: true, type: String, unique: true },
   isVerified: { default: false, type: Boolean },
   password: { required: true, type: String },
-  role: { default: "USER", type: String },
+  role: { default: 'USER', type: String },
   verificationLink: { type: String },
   createNewPasswordLink: { type: String },
-  avatarPath: { default: "", type: String },
-  avatarName: { default: "", type: String },
+  avatarPath: { default: '', type: String },
+  avatarName: { default: '', type: String },
 });
 
-module.exports = model("User", User);
+const User = model('User', userSchema);
+
+export default User;

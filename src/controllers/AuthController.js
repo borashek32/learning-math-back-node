@@ -1,6 +1,6 @@
-const AuthService = require("./../service/AuthService");
-const { validationResult } = require("express-validator");
-const ApiError = require("./../exceptions/ApiError");
+import AuthService from "../service/AuthService.js";
+import { validationResult } from "express-validator";
+import ApiError from "../exceptions/ApiError.js";
 
 class AuthController {
   async login(req, res, next) {
@@ -8,21 +8,13 @@ class AuthController {
       const { email, password } = req.body;
       const userData = await AuthService.login(email, password);
 
-      // const maxAge = rememberMe ? (30 * 24 * 60 * 60 * 1000) : 0
       const maxAge = 30 * 24 * 60 * 60 * 1000;
 
       res.cookie("refreshToken", userData.refreshToken, {
         httpOnly: true,
-        maxAge: maxAge,
+        maxAge,
       });
 
-      // to look for refreshToken in cookies
-      // const headers = res.getHeaders()
-      // const setCookieHeader = headers['set-cookie']
-      // const cookies = setCookieHeader.split(';').map(cookie => cookie.trim())
-      // const refreshToken = cookies.find(cookie => cookie.startsWith('refreshToken='))
-
-      // console.log('Refresh Token:', refreshToken);
       return res.json(userData);
     } catch (e) {
       next(e);
@@ -36,9 +28,6 @@ class AuthController {
 
       res.clearCookie("refreshToken");
 
-      // delete req.headers.authorization
-      // delete req.user
-
       return res.json({ message: "Logout successful" });
     } catch (e) {
       next(e);
@@ -47,18 +36,11 @@ class AuthController {
 
   async refresh(req, res, next) {
     try {
-      // to get refreshToken from cookies
       const cookieHeader = req.headers.cookie;
-      const cookies = cookieHeader.split(";").map((cookie) => cookie.trim());
-      const refreshTokenCookie = cookies.find((cookie) =>
-        cookie.startsWith("refreshToken=")
-      );
+      const cookies = cookieHeader.split(";").map(cookie => cookie.trim());
+      const refreshTokenCookie = cookies.find(cookie => cookie.startsWith("refreshToken="));
 
-      let refreshToken;
-      if (refreshTokenCookie) {
-        refreshToken = refreshTokenCookie.split("=")[1];
-      }
-
+      const refreshToken = refreshTokenCookie ? refreshTokenCookie.split("=")[1] : null;
       const userData = await AuthService.refresh(refreshToken);
 
       res.cookie("refreshToken", userData.refreshToken, {
@@ -83,11 +65,6 @@ class AuthController {
       const { email, password } = req.body;
       const userData = await AuthService.registration(email, password);
 
-      // res.cookie('refreshToken', userData.refreshToken, {
-      //   httpOnly: true,
-      //   maxAge: 30 * 24 * 60 * 60 * 1000,
-      // })
-
       return res.json(userData);
     } catch (e) {
       console.error("Registration error:", e);
@@ -97,39 +74,31 @@ class AuthController {
 
   async verify(req, res, next) {
     try {
-      const verificationLink = req.params.verificationLink;
+      const { verificationLink } = req.params;
       await AuthService.verify(verificationLink);
 
       return res.redirect(`${process.env.CLIENT_MOBILE_URL}/--/login`);
-      // return res.redirect(`${process.env.CLIENT_MOBILE_URL}/--/verify/${verificationLink}`)
     } catch (e) {
-      return next(e);
+      next(e);
     }
   }
 
   async forgotPassword(req, res, next) {
     try {
-      const email = req.body.email;
+      const { email } = req.body;
       const userEmail = await AuthService.forgotPassword(email);
 
-      if (userEmail) {
-        return res.json(`Check your email ${email}`);
-      } else {
-        return res.json("User email is not correct");
-      }
+      return res.json(userEmail ? `Check your email ${email}` : "User email is not correct");
     } catch (e) {
-      return next(e);
+      next(e);
     }
   }
 
   async createNewPassword(req, res, next) {
     try {
-      const createNewPasswordLink = req.params.createNewPasswordLink;
-      const email = req.params.email;
+      const { createNewPasswordLink, email } = req.params;
 
-      return res.redirect(
-        `${process.env.CLIENT_MOBILE_URL}/--/create-new-password/${createNewPasswordLink}/${email}`
-      );
+      return res.redirect(`${process.env.CLIENT_MOBILE_URL}/--/create-new-password/${createNewPasswordLink}/${email}`);
     } catch (e) {
       next(e);
     }
@@ -137,9 +106,7 @@ class AuthController {
 
   async saveNewPassword(req, res, next) {
     try {
-      const password = req.body.password;
-      const email = req.body.email;
-
+      const { password, email } = req.body;
       const userData = await AuthService.saveNewPassword(email, password);
 
       res.cookie("refreshToken", userData.refreshToken, {
@@ -156,11 +123,10 @@ class AuthController {
   async changePassword(req, res, next) {
     try {
       const { userId, password, newPassword } = req.body;
-      const _id = userId;
-      const user = await AuthService.changePassword(_id, password, newPassword);
+      const user = await AuthService.changePassword(userId, password, newPassword);
 
       if (user) {
-        res.json(user);
+        return res.json(user);
       } else {
         throw ApiError.BadRequest("User not found");
       }
@@ -172,12 +138,10 @@ class AuthController {
   async changeEmail(req, res, next) {
     try {
       const { userId, newEmail } = req.body;
-
-      const _id = userId;
-      const user = await AuthService.changeEmail(_id, newEmail);
+      const user = await AuthService.changeEmail(userId, newEmail);
 
       if (user) {
-        res.json(user);
+        return res.json(user);
       } else {
         throw ApiError.BadRequest("User not found");
       }
@@ -193,9 +157,9 @@ class AuthController {
       const user = await AuthService.me(accessToken);
 
       if (user) {
-        return user;
+        return res.json(user);
       } else {
-        throw ApiError.BadRequest('User not found')
+        throw ApiError.BadRequest("User not found");
       }
     } catch (e) {
       next(e);
@@ -203,4 +167,4 @@ class AuthController {
   }
 }
 
-module.exports = new AuthController();
+export default new AuthController();

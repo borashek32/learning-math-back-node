@@ -1,9 +1,9 @@
-const { Schema, model } = require("mongoose");
+import { Schema, model } from 'mongoose';
 
-const Score = new Schema({
+const scoreSchema = new Schema({
   userId: { type: String, required: true },
   score: { type: Number, required: true },
   date: { type: String, required: true },
 });
 
-module.exports = model("Score", Score);
+export default model('Score', scoreSchema);
