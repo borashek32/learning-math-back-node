@@ -1,7 +1,9 @@
-import TokenService from '../service/TokenService.js';
-import ApiError from '../exceptions/ApiError.js';
+import { RequestHandler } from 'express';
+import TokenService from '../service/TokenService';
+import ApiError from '../exceptions/ApiError';
+import { CustomRequest } from '../types/types';
 
-export default async function (req, res, next) {
+const AuthMiddleware: RequestHandler = async (req: CustomRequest, res, next) => {
   try {
     const authorizationHeader = req.headers.authorization;
 
@@ -27,4 +29,6 @@ export default async function (req, res, next) {
     console.log('UnauthorizedError', error);
     return next(ApiError.UnauthorizedError());
   }
-}
+};
+
+export default AuthMiddleware;

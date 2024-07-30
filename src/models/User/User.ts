@@ -1,8 +1,7 @@
-import mongoose from 'mongoose';
+import { Schema, model } from 'mongoose';
+import { IUser } from './IUser';
 
-const { Schema, model } = mongoose;
-
-const userSchema = new Schema({
+const userSchema = new Schema<IUser>({
   email: { required: true, type: String, unique: true },
   isVerified: { default: false, type: Boolean },
   password: { required: true, type: String },
@@ -13,6 +12,6 @@ const userSchema = new Schema({
   avatarName: { default: '', type: String },
 });
 
-const User = model('User', userSchema);
+const User = model<IUser>('User', userSchema);
 
 export default User;
