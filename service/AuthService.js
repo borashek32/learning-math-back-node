@@ -10,7 +10,6 @@ const ApiError = require("../exceptions/ApiError");
 class AuthService {
   async login(email, password) {
     const user = await UserModel.findOne({ email })
-    console.log('AuthService', email, password)
 
     if (!user) {
       throw ApiError.BadRequest('login User not found')

@@ -28,7 +28,7 @@ class UserService {
         return { data: existedUserScore };
       }
     } catch (e) {
-      return { message: "User not found", success: false };
+      return { message: `User not found, ${e}`, success: false };
     }
   }
 

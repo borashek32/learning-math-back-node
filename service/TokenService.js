@@ -43,11 +43,11 @@ class TokenService {
   }
 
   validateAccessToken(accessToken) {
-    // try {
-    //   return jwt.verify(accessToken, process.env.JWT_ACCESS_TOKEN);
-    // } catch (e) {
-    //   return null;
-    // }
+    try {
+      return jwt.verify(accessToken, process.env.JWT_ACCESS_TOKEN);
+    } catch (e) {
+      return null;
+    }
   }
 
   validateRefreshToken(token) {
