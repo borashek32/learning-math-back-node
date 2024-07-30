@@ -1,33 +1,33 @@
-const jwt = require('jsonwebtoken')
-const { secret } = require('./../config')
+const jwt = require("jsonwebtoken");
+const { secret } = require("./../config");
 
 module.exports = function (roles) {
   return function (req, res, next) {
-    if (req.method === 'OPTIONS') {
-      next()
+    if (req.method === "OPTIONS") {
+      next();
     }
 
     try {
-      const token = req.headers.authorization.split(' ')[1]
+      const token = req.headers.authorization.split(" ")[1];
 
       if (!token) {
-        return res.status(400).json({ message: 'User not authorized' })
+        return res.status(400).json({ message: "User not authorized" });
       }
-      const { roles: userRoles } = jwt.verify(token, secret)
-      let hasRole = false
+      const { roles: userRoles } = jwt.verify(token, secret);
+      let hasRole = false;
 
-      userRoles.forEach(role => {
+      userRoles.forEach((role) => {
         if (roles.includes(role)) {
-          hasRole = true
+          hasRole = true;
         }
-      })
+      });
       if (!hasRole) {
-        return res.status(400).json({ message: 'User does not have rights' })
+        return res.status(400).json({ message: "User does not have rights" });
       }
 
-      next()
+      next();
     } catch (e) {
-      return res.status(400).json({ message: 'User not authorized' })
+      return res.status(400).json({ message: `User not authorized, ${e}` });
     }
-  }
-}
+  };
+};

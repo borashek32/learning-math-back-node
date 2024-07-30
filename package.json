@@ -7,22 +7,26 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.js",
     "start": "node index.js",
-    "build": "echo 'Build script placeholder'"
+    "build": "echo 'Build script placeholder'",
+    "lint:check": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prettier:check": "prettier --check .",
+    "prettier:fix": "prettier --write ."
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "-": "^0.0.1",
-    "@it-incubator/eslint-config": "^1.0.1",
-    "@it-incubator/prettier-config": "^0.1.2",
-    "@it-incubator/stylelint-config": "^0.1.5",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "D": "^1.0.0",
     "dotenv": "^16.3.1",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
     "express": "^4.18.2",
     "express-session": "^1.18.0",
     "express-validator": "^7.0.1",
@@ -34,12 +38,15 @@
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
+    "prettier": "^3.3.3",
     "resend": "^3.2.0",
     "stylelint": "^15.10.1",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "eslint": "^8.55.0",
+    "@eslint/js": "^9.8.0",
+    "eslint": "^9.8.0",
+    "globals": "^15.8.0",
     "nodemon": "^3.0.2"
   }
 }
