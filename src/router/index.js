@@ -1,6 +1,6 @@
 const Router = require("express").Router;
-const AuthController = require("../controllers/AuthController");
-const UserController = require("../controllers/UserController");
+const AuthController = require("./../controllers/AuthController");
+const UserController = require("./../controllers/UserController");
 const AuthMiddleware = require("./../middleware/AuthMiddleware");
 const { body } = require("express-validator");
 // const jwt = require("jsonwebtoken");

@@ -1,7 +1,7 @@
-const UserModel = require("../models/User");
-const ScoreModel = require("../models/Score");
+const UserModel = require("./../models/User");
+const ScoreModel = require("./../models/Score");
 const ScoreDto = require("./../dtos/ScoreDto");
-const ApiError = require("../exceptions/ApiError");
+const ApiError = require("./../exceptions/ApiError");
 
 class UserService {
   async getAllUsers() {

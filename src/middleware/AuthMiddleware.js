@@ -1,5 +1,5 @@
-const TokenService = require("../service/TokenService");
-const ApiError = require("../exceptions/ApiError");
+const TokenService = require("./../service/TokenService");
+const ApiError = require("./../exceptions/ApiError");
 
 module.exports = async function (req, res, next) {
   try {
