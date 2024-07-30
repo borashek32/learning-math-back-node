@@ -7,6 +7,7 @@ class AuthController {
     try {
       const { email, password } = req.body;
       const userData = await AuthService.login(email, password);
+      console.log('AuthController', email, password)
 
       // const maxAge = rememberMe ? (30 * 24 * 60 * 60 * 1000) : 0
       const maxAge = 30 * 24 * 60 * 60 * 1000;

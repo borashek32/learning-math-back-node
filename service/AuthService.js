@@ -9,30 +9,26 @@ const ApiError = require("../exceptions/ApiError");
 
 class AuthService {
   async login(email, password) {
-    const user = await UserModel.findOne({ email });
-    console.log(email);
+    const user = await UserModel.findOne({ email })
+    console.log('AuthService', email, password)
 
     if (!user) {
-      throw ApiError.BadRequest("login User not found");
+      throw ApiError.BadRequest('login User not found')
     }
-    const isPassEquals = await bcrypt.compare(password, user.password);
+    const isPassEquals = await bcrypt.compare(password, user.password)
 
     if (!isPassEquals) {
-      throw ApiError.BadRequest("User password not correct");
+      throw ApiError.BadRequest('login User password not correct')
     }
-    const userDto = new UserDto(user);
-    const tokens = TokenService.generateTokens({ ...userDto });
+    const userDto = new UserDto(user)
+    const tokens = TokenService.generateTokens({ ...userDto })
 
-    await TokenService.saveToken(
-      userDto._id,
-      tokens.refreshToken,
-      tokens.accessToken
-    );
+    await TokenService.saveToken(userDto._id, tokens.refreshToken, tokens.accessToken)
 
-    return {
-      ...tokens,
+    return { 
+      ...tokens, 
       user: userDto,
-    };
+    }
   }
 
   async logout(accessToken) {
@@ -202,7 +198,7 @@ class AuthService {
     try {
       const userTokenModel = await TokenModel.findOne({ accessToken });
       if (!userTokenModel) {
-        throw ApiError.BadRequest("User not found");
+        throw ApiError.BadRequest("User not found me query");
       }
 
       const objectId = userTokenModel._id;
@@ -213,10 +209,10 @@ class AuthService {
       if (user) {
         return user;
       } else {
-        throw ApiError.BadRequest("User not found");
+        throw ApiError.BadRequest("User not found me query");
       }
     } catch (error) {
-      return ApiError.UnauthorizedError(`User not authorized, ${error}`);
+      return ApiError.UnauthorizedError(`User not authorized me query`);
     }
   }
 }
