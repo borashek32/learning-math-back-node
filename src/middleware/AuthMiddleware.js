@@ -1,7 +1,7 @@
-const TokenService = require("./../service/TokenService");
-const ApiError = require("./../exceptions/ApiError");
+import TokenService from '../service/TokenService.js';
+import ApiError from '../exceptions/ApiError.js';
 
-module.exports = async function (req, res, next) {
+export default async function (req, res, next) {
   try {
     const authorizationHeader = req.headers.authorization;
 
@@ -9,7 +9,7 @@ module.exports = async function (req, res, next) {
       return next(ApiError.UnauthorizedError());
     }
 
-    const accessToken = authorizationHeader.split(" ")[1];
+    const accessToken = authorizationHeader.split(' ')[1];
 
     if (!accessToken) {
       return next(ApiError.UnauthorizedError());
@@ -24,7 +24,7 @@ module.exports = async function (req, res, next) {
     req.user = userData;
     next();
   } catch (error) {
-    console.log("UnauthorizedError", error);
+    console.log('UnauthorizedError', error);
     return next(ApiError.UnauthorizedError());
   }
-};
+}

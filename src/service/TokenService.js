@@ -1,5 +1,5 @@
-const jwt = require("jsonwebtoken");
-const TokenModel = require("./../models/Token");
+import jwt from 'jsonwebtoken';
+import TokenModel from './../models/Token.js';
 
 class TokenService {
   async findToken(refreshToken) {
@@ -12,10 +12,10 @@ class TokenService {
 
   generateTokens(payload) {
     const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_TOKEN, {
-      expiresIn: "30m",
+      expiresIn: '30m',
     });
     const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_TOKEN, {
-      expiresIn: "30d",
+      expiresIn: '30d',
     });
 
     return { accessToken, refreshToken };
@@ -59,4 +59,4 @@ class TokenService {
   }
 }
 
-module.exports = new TokenService();
+export default new TokenService();

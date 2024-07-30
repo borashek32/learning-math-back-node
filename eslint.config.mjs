@@ -9,6 +9,10 @@ export default [
       ecmaVersion: 2021,
     },
   },
+  parserOptions: {
+    ecmaVersion: 2021,
+    sourceType: 'module',
+  },
   {
     languageOptions: {
       globals: {

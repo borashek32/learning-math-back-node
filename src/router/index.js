@@ -1,23 +1,10 @@
-const Router = require("express").Router;
-const AuthController = require("./../controllers/AuthController");
-const UserController = require("./../controllers/UserController");
-const AuthMiddleware = require("./../middleware/AuthMiddleware");
-const { body } = require("express-validator");
-// const jwt = require("jsonwebtoken");
+import { Router } from 'express';
+import AuthController from './../controllers/AuthController.js';
+import UserController from './../controllers/UserController.js';
+import AuthMiddleware from './../middleware/AuthMiddleware.js';
+import { body } from 'express-validator';
 
-const router = new Router();
-
-// const authenticateToken = (req, res, next) => {
-//   const token = req.header("Authorization");
-//   if (!token) return res.status(401).json({ message: "Unauthorized" });
-
-//   jwt.verify(token, secretKey, (err, user) => {
-//     if (err) return res.status(403).json({ message: "Forbidden" });
-
-//     req.user = user;
-//     next();
-//   });
-// };
+const router = Router();
 
 router.get("/", (req, res) => {
   res.status(200).json("Welcome, your app is working well");
@@ -39,38 +26,43 @@ router.post(
   AuthController.registration
 );
 
-// auth
-router.post("/login", AuthController.login); // add remember me
-// router.get('/verify/:verificationLink', AuthController.verify)
-// router.post('/forgot-password', AuthController.forgotPassword)
-// router.get('/create-new-password/:createNewPasswordLink/:email', AuthController.createNewPassword)
-// router.post('/save-new-password', AuthController.saveNewPassword)
+router.post("/login", AuthController.login);
 
-// router.post('/change-password', AuthMiddleware, AuthController.changePassword)
-// router.post('/change-email', AuthMiddleware, AuthController.changeEmail)
+// Uncomment and adjust routes as needed
+// router.get('/verify/:verificationLink', AuthController.verify);
+// router.post('/forgot-password', AuthController.forgotPassword);
+// router.get('/create-new-password/:createNewPasswordLink/:email', AuthController.createNewPassword);
+// router.post('/save-new-password', AuthController.saveNewPassword);
+
+// Uncomment and adjust routes as needed
+// router.post('/change-password', AuthMiddleware, AuthController.changePassword);
+// router.post('/change-email', AuthMiddleware, AuthController.changeEmail);
+
 router.get("/me", AuthMiddleware, AuthController.me);
 router.post("/logout", AuthMiddleware, AuthController.logout);
 
 router.get("/refresh", AuthController.refresh);
 
-// profile
+// Profile routes
 router.get(
   "/get-total-user-score/:userId",
   AuthMiddleware,
   UserController.getTotalUserScore
 );
+
 router.post(
   "/update-user-score",
   AuthMiddleware,
   UserController.updateUserScore
 );
+
 router.post(
   "/update-user-avatar",
   AuthMiddleware,
   UserController.updateUserAvatar
 );
 
-// to check
-// router.get('/users', AuthMiddleware, UserController.getUsers)
+// Uncomment and adjust routes as needed
+// router.get('/users', AuthMiddleware, UserController.getUsers);
 
-module.exports = router;
+export default router;

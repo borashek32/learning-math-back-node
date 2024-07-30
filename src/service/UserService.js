@@ -1,7 +1,7 @@
-const UserModel = require("./../models/User");
-const ScoreModel = require("./../models/Score");
-const ScoreDto = require("./../dtos/ScoreDto");
-const ApiError = require("./../exceptions/ApiError");
+import UserModel from '../models/User.js';
+import ScoreModel from '../models/Score.js';
+import ScoreDto from '../dtos/ScoreDto.js';
+import ApiError from '../exceptions/ApiError.js';
 
 class UserService {
   async getAllUsers() {
@@ -23,7 +23,7 @@ class UserService {
         return { data: scoreDto };
       } else {
         existedUserScore.score += score;
-        existedUserScore.save();
+        await existedUserScore.save(); // Ensure to wait for the save operation to complete
 
         return { data: existedUserScore };
       }
@@ -34,28 +34,34 @@ class UserService {
 
   async getTotalUserScore(userId) {
     try {
-      const totalUserScore = ScoreModel.findOne({ userId });
+      const totalUserScore = await ScoreModel.findOne({ userId }); // Added await here
 
       if (totalUserScore) {
         return totalUserScore;
       }
+      return { message: 'No score found', success: false }; // Handle case where score is not found
     } catch (e) {
-      return { message: `User not found, ${e}`, success: false };
+      return { message: `Error retrieving score, ${e}`, success: false };
     }
   }
 
   async updateUserAvatar(userId, avatarPath, avatarName) {
-    const user = await UserModel.findOne({ _id: userId });
+    try {
+      const user = await UserModel.findOne({ _id: userId });
 
-    if (!user) {
-      throw ApiError.BadRequest("User not found");
+      if (!user) {
+        throw ApiError.BadRequest("User not found");
+      }
+
+      user.avatarPath = avatarPath;
+      user.avatarName = avatarName;
+      await user.save(); // Ensure to wait for the save operation to complete
+
+      return user;
+    } catch (e) {
+      throw ApiError.BadRequest(`Error updating avatar, ${e}`);
     }
-    user.avatarPath = avatarPath;
-    user.avatarName = avatarName;
-    user.save();
-
-    return user;
   }
 }
 
-module.exports = new UserService();
+export default new UserService();

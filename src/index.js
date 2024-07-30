@@ -1,15 +1,15 @@
-require("dotenv").config(); // always change this line for prod
-const express = require("express");
-const cors = require("cors");
-const cookieParser = require("cookie-parser");
-const session = require("express-session");
-const mongoose = require("mongoose");
-const passport = require("passport");
-const router = require("./router/index");
-const ErrorMiddleware = require("./middleware/ErrorMiddleware");
-const bcrypt = require("bcryptjs");
-const { ExtractJwt, Strategy: JwtStrategy } = require("passport-jwt");
-const User = require("./models/User");
+import 'dotenv/config'; // always change this line for prod
+import express from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import session from 'express-session';
+import mongoose from 'mongoose';
+import passport from 'passport';
+import router from './router/index.js';
+import ErrorMiddleware from './middleware/ErrorMiddleware.js';
+import bcrypt from 'bcryptjs';
+import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
+import User from './models/User.js';
 
 const PORT = 7001;
 
@@ -19,7 +19,7 @@ const corsOptions = {
   credentials: true,
 };
 
-const secretKeyJwt = bcrypt.hash("learning-math.com", 5).toString("hex");
+const secretKeyJwt = bcrypt.hashSync('learning-math.com', 5);
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: secretKeyJwt, // Замените на свой секретный ключ для подписи и верификации токенов JWT
@@ -30,7 +30,7 @@ const app = express();
 app.use(cors(corsOptions));
 app.use(
   session({
-    secret: "learning-math.com",
+    secret: 'learning-math.com',
     resave: false,
     saveUninitialized: false,
   })
@@ -41,7 +41,7 @@ app.use(cookieParser());
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use("/api", router);
+app.use('/api', router);
 app.use(ErrorMiddleware);
 
 passport.use(
@@ -62,9 +62,9 @@ passport.use(
 const start = async () => {
   try {
     await mongoose.connect(process.env.DB_URL);
-    app.listen(PORT, () => console.log(`server started ${PORT}`));
+    app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
   } catch (e) {
-    console.log("error from the first index.js", e);
+    console.error('Error from the first index.js', e);
   }
 };
 
