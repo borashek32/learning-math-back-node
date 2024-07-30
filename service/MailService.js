@@ -1,4 +1,4 @@
-const nodemailer = require('nodemailer')
+// const nodemailer = require("nodemailer");
 
 class MailService {
   // constructor() {
@@ -13,28 +13,27 @@ class MailService {
   //   })
   // }
 
-  async sendVerificationLink(to, verificationLink) {
-    
-    // await this.transporter.sendMail({
-    //   from: process.env.SMTP_USER,
-    //   subject: `Verify your account ${process.env.CLIENT_WEB_URL}`,
-    //   html: `
-    //     <div>
-    //       <p>
-    //         You successfully registered on 
-    //         <a href="#">Learn-math.com</a>
-    //       </p>
-    //       <p>For verification of your account follow the link</p>
-    //       <a href="${verificationLink}">
-    //         <button>Verify your account and login</button>
-    //       </a>
-    //     </div>
-    //   `,
-    //   text: '',
-    //   to,
-    // })
-    console.log('Email sent successfully')
-  }
+  // async sendVerificationLink(to, verificationLink) {
+  // await this.transporter.sendMail({
+  //   from: process.env.SMTP_USER,
+  //   subject: `Verify your account ${process.env.CLIENT_WEB_URL}`,
+  //   html: `
+  //     <div>
+  //       <p>
+  //         You successfully registered on
+  //         <a href="#">Learn-math.com</a>
+  //       </p>
+  //       <p>For verification of your account follow the link</p>
+  //       <a href="${verificationLink}">
+  //         <button>Verify your account and login</button>
+  //       </a>
+  //     </div>
+  //   `,
+  //   text: '',
+  //   to,
+  // })
+  // console.log("Email sent successfully");
+  // }
 
   async sendConfirmationLetter(to, user) {
     await this.transporter.sendMail({
@@ -49,9 +48,9 @@ class MailService {
           <p>User email: ${user.email}</p>
         </div>
       `,
-      text: '',
+      text: "",
       to,
-    })
+    });
   }
 
   async sendPasswordRecoveryLink(to, passwordRecoveryLink) {
@@ -64,10 +63,10 @@ class MailService {
           <a href="${passwordRecoveryLink}">${passwordRecoveryLink}</a>
         </div>
       `,
-      text: '',
+      text: "",
       to,
-    })
+    });
   }
 }
 
-module.exports = new MailService()
+module.exports = new MailService();
