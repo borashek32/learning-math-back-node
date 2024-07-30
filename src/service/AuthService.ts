@@ -194,9 +194,9 @@ class AuthService {
         throw ApiError.BadRequest('User not found');
       }
 
-      const objectId = userTokenModel._id;
+      const objectId = userTokenModel.user;
       const user = await UserModel.findById(objectId);
-
+      
       if (user) {
         return user;
       } else {

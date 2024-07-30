@@ -55,7 +55,7 @@ class TokenService {
   validateAccessToken(token: string): IUser | null {
     try {
       const decoded = jwt.verify(token, process.env.JWT_ACCESS_TOKEN!) as IUser;
-      console.log(decoded)
+      
       return decoded;
     } catch (e) {
       return null;
