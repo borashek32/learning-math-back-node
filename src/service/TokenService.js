@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const TokenModel = require("../models/Token");
+const TokenModel = require("./../models/Token");
 
 class TokenService {
   async findToken(refreshToken) {
