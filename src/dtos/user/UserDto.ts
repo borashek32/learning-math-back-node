@@ -1,6 +1,7 @@
-import { IUser } from "../models/User/IUser";
+import { IUser } from "../../models/User/IUser";
+import { IUserDto } from "./IUser.dto";
 
-export default class UserDto {
+export default class UserDto implements IUserDto {
   email: string;
   _id: string;
   isVerified: boolean;

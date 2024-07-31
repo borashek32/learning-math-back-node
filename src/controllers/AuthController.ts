@@ -1,11 +1,11 @@
 import AuthService from "../service/AuthService";
 import { validationResult } from "express-validator";
 import ApiError from "../exceptions/ApiError";
-import { LoginRequestBody, RegisterRequestBody, SaveNewPasswordRequestBody } from "../types/types";
+import { IAuth } from "../types/types";
 import { Request, Response, NextFunction } from 'express';
 
 class AuthController {
-  async login(req: Request<{}, {}, LoginRequestBody>, res: Response, next: NextFunction): Promise<void> {
+  async login(req: Request<{}, {}, IAuth>, res: Response, next: NextFunction): Promise<void> {
     try {
       const { email, password } = req.body;
       const userData = await AuthService.login(email, password);
@@ -65,7 +65,7 @@ class AuthController {
     }
   }
 
-  async registration(req: Request<any, any, RegisterRequestBody>, res: Response, next: NextFunction): Promise<void> {
+  async registration(req: Request<any, any, IAuth>, res: Response, next: NextFunction): Promise<void> {
     try {
       const errors = validationResult(req).array();
 
@@ -117,18 +117,16 @@ class AuthController {
   }
 
   async saveNewPassword(
-    req: Request<{}, {}, SaveNewPasswordRequestBody>, 
+    req: Request<{}, {}, IAuth>, 
     res: Response, 
     next: NextFunction
   ): Promise<void> {
     try {
       const { password, email } = req.body;
 
-      // Вызов сервиса для сохранения нового пароля
-      const userData: IUserData | null = await AuthService.saveNewPassword(email, password);
+      const userData: any | null = await AuthService.saveNewPassword(email, password);
 
       if (!userData) {
-        // Если данные пользователя не найдены, вернем ошибку
         return next(ApiError.BadRequest("User not found"));
       }
 

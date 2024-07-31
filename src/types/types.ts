@@ -1,28 +1,27 @@
-import { Request } from 'express';// Импортируйте свой интерфейс IUser
 import { IUser } from '../models/User/IUser';
 
-// Расширяем стандартный Request интерфейс
-export interface CustomRequest extends Request {
-  user?: IUser; // Добавляем свойство user с типом IUser
-}
-
-export interface LoginRequestBody {
+export interface IAuth {
   email: string;
   password: string;
 }
-
-export interface RegisterRequestBody {
-  email: string;
-  password: string;
-}
-
-export interface SaveNewPasswordRequestBody {
-  password: string;
-  email: string;
-}
-
 export interface IUserRefreshTokenData {
   refreshToken: string;
 }
-
-
+export interface IUserData {
+  user: IUser;
+  refreshToken: string;
+  accessToken: string;
+}
+export interface IUsedDataFromTokenService {
+  _id: string;
+  email: string;
+  isVerified: boolean;
+  password: string;
+  role: string;
+  verificationLink?: string;
+  createNewPasswordLink?: string;
+  avatarPath?: string;
+  avatarName?: string;
+  iat: number;
+  exp: number;
+}

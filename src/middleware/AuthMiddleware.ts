@@ -1,9 +1,13 @@
-import { RequestHandler } from 'express';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
 import TokenService from '../service/TokenService';
 import ApiError from '../exceptions/ApiError';
-import { CustomRequest } from '../types/types';
+import { IUser } from '../models/User/IUser';
 
-const AuthMiddleware: RequestHandler = async (req: CustomRequest, res, next) => {
+const AuthMiddleware: RequestHandler = async (
+  req: Request, 
+  res: Response, 
+  next: NextFunction
+) => {
   try {
     const authorizationHeader = req.headers.authorization;
 
@@ -17,7 +21,7 @@ const AuthMiddleware: RequestHandler = async (req: CustomRequest, res, next) => 
       return next(ApiError.UnauthorizedError());
     }
 
-    const userData = TokenService.validateAccessToken(accessToken);
+    const userData = TokenService.validateAccessToken(accessToken) as IUser;
 
     if (!userData) {
       return next(ApiError.UnauthorizedError());
@@ -26,7 +30,6 @@ const AuthMiddleware: RequestHandler = async (req: CustomRequest, res, next) => 
     req.user = userData;
     next();
   } catch (error) {
-    console.log('UnauthorizedError', error);
     return next(ApiError.UnauthorizedError());
   }
 };

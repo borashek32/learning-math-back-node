@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import TokenModel from '../models/Token/Token';
 import { IUser } from '../models/User/IUser';
-import UserDto from '../dtos/UserDto';
+import UserDto from '../dtos/user/UserDto';
 
 interface IPayload {
   _id: string;
@@ -52,11 +52,11 @@ class TokenService {
     });
   }
 
-  validateAccessToken(token: string): IUser | null {
+  validateAccessToken(token: string) {
     try {
-      const decoded = jwt.verify(token, process.env.JWT_ACCESS_TOKEN!) as IUser;
+      const user = jwt.verify(token, process.env.JWT_ACCESS_TOKEN!) as IUser;
       
-      return decoded;
+      return user;
     } catch (e) {
       return null;
     }
