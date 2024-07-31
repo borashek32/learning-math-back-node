@@ -17,7 +17,7 @@ dotenv.config();
 const PORT = 7001;
 
 const corsOptions = {
-  origin: 'http://localhost:3000',
+  origin: 'exp://192.168.31.232:8081',
   // origin: "https://learning-math-front-react.vercel.app",
   credentials: true,
 };

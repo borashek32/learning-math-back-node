@@ -3,12 +3,14 @@ import { validationResult } from "express-validator";
 import ApiError from "../exceptions/ApiError";
 import { IAuth } from "../types/types";
 import { Request, Response, NextFunction } from 'express';
+import { emit } from "process";
 
 class AuthController {
   async login(req: Request<{}, {}, IAuth>, res: Response, next: NextFunction): Promise<void> {
     try {
       const { email, password } = req.body;
       const userData = await AuthService.login(email, password);
+      console.log(userData)
 
       const maxAge = 30 * 24 * 60 * 60 * 1000;
 
