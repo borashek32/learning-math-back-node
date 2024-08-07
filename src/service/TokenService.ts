@@ -25,7 +25,7 @@ class TokenService {
       throw new Error('JWT secrets are not defined');
     }
   
-    const accessToken = jwt.sign(payload, accessTokenSecret, { expiresIn: '10s' });
+    const accessToken = jwt.sign(payload, accessTokenSecret, { expiresIn: '120m' });
     const refreshToken = jwt.sign(payload, refreshTokenSecret, { expiresIn: '30d' });
   
     return { accessToken, refreshToken };
