@@ -5,11 +5,14 @@ import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import mongoose from 'mongoose';
 import passport from 'passport';
-import router from './router/index.js';
-import ErrorMiddleware from './middleware/ErrorMiddleware.js';
+import router from './router/index';
+import ErrorMiddleware from './middleware/ErrorMiddleware';
 import bcrypt from 'bcryptjs';
 import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
-import User from './models/User.js';
+import User from './models/User/User';
+
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 const PORT = 7001;
 
@@ -61,7 +64,11 @@ passport.use(
 
 const start = async () => {
   try {
-    await mongoose.connect(process.env.DB_URL);
+    const dbUrl = process.env.DB_URL;
+    if (!dbUrl) {
+      throw new Error("DB_URL is not defined in the environment variables.");
+    }
+    await mongoose.connect(dbUrl);
     app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
   } catch (e) {
     console.error('Error from the first index.js', e);

@@ -1,7 +1,13 @@
-import TokenService from '../service/TokenService.js';
-import ApiError from '../exceptions/ApiError.js';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
+import TokenService from '../service/TokenService';
+import ApiError from '../exceptions/ApiError';
+import { IUser } from '../models/User/IUser';
 
-export default async function (req, res, next) {
+const AuthMiddleware: RequestHandler = async (
+  req: Request, 
+  res: Response, 
+  next: NextFunction
+) => {
   try {
     const authorizationHeader = req.headers.authorization;
 
@@ -15,7 +21,7 @@ export default async function (req, res, next) {
       return next(ApiError.UnauthorizedError());
     }
 
-    const userData = TokenService.validateAccessToken(accessToken);
+    const userData = TokenService.validateAccessToken(accessToken) as IUser;
 
     if (!userData) {
       return next(ApiError.UnauthorizedError());
@@ -24,7 +30,8 @@ export default async function (req, res, next) {
     req.user = userData;
     next();
   } catch (error) {
-    console.log('UnauthorizedError', error);
     return next(ApiError.UnauthorizedError());
   }
-}
+};
+
+export default AuthMiddleware;

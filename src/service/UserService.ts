@@ -1,5 +1,5 @@
-import UserModel from '../models/User.js';
-import ScoreModel from '../models/Score.js';
+import UserModel from '../models/User/User';
+import ScoreModel from '../models/Score/Score';
 import ScoreDto from '../dtos/ScoreDto.js';
 import ApiError from '../exceptions/ApiError.js';
 
@@ -8,7 +8,7 @@ class UserService {
     return await UserModel.find();
   }
 
-  async updateUserScore(userId, score, date) {
+  async updateUserScore(userId: string, score: number, date: string) {
     try {
       const existedUserScore = await ScoreModel.findOne({ userId });
 
@@ -32,20 +32,20 @@ class UserService {
     }
   }
 
-  async getTotalUserScore(userId) {
+  async getTotalUserScore(userId: string) {
     try {
-      const totalUserScore = await ScoreModel.findOne({ userId }); // Added await here
+      const totalUserScore = await ScoreModel.findOne({ userId });
 
       if (totalUserScore) {
         return totalUserScore;
       }
-      return { message: 'No score found', success: false }; // Handle case where score is not found
+      return { message: 'No score found', success: false };
     } catch (e) {
       return { message: `Error retrieving score, ${e}`, success: false };
     }
   }
 
-  async updateUserAvatar(userId, avatarPath, avatarName) {
+  async updateUserAvatar(userId: string, avatarPath: string, avatarName: string) {
     try {
       const user = await UserModel.findOne({ _id: userId });
 
@@ -55,7 +55,7 @@ class UserService {
 
       user.avatarPath = avatarPath;
       user.avatarName = avatarName;
-      await user.save(); // Ensure to wait for the save operation to complete
+      await user.save();
 
       return user;
     } catch (e) {

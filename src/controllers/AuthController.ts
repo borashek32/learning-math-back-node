@@ -1,9 +1,12 @@
-import AuthService from "../service/AuthService.js";
+import AuthService from "../service/AuthService";
 import { validationResult } from "express-validator";
-import ApiError from "../exceptions/ApiError.js";
+import ApiError from "../exceptions/ApiError";
+import { IAuth } from "../types/types";
+import { Request, Response, NextFunction } from 'express';
+import { emit } from "process";
 
 class AuthController {
-  async login(req, res, next) {
+  async login(req: Request<{}, {}, IAuth>, res: Response, next: NextFunction): Promise<void> {
     try {
       const { email, password } = req.body;
       const userData = await AuthService.login(email, password);
@@ -15,118 +18,137 @@ class AuthController {
         maxAge,
       });
 
-      return res.json(userData);
+      res.json(userData);
     } catch (e) {
       next(e);
     }
   }
 
-  async logout(req, res, next) {
+  async logout(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { accessToken } = req.body;
       await AuthService.logout(accessToken);
 
       res.clearCookie("refreshToken");
 
-      return res.json({ message: "Logout successful" });
+      res.json({ message: "Logout successful" });
     } catch (e) {
       next(e);
     }
   }
 
-  async refresh(req, res, next) {
+  async refresh(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const cookieHeader = req.headers.cookie;
-      const cookies = cookieHeader.split(";").map(cookie => cookie.trim());
+      const cookies = cookieHeader ? cookieHeader.split(";").map(cookie => cookie.trim()) : [];
       const refreshTokenCookie = cookies.find(cookie => cookie.startsWith("refreshToken="));
 
       const refreshToken = refreshTokenCookie ? refreshTokenCookie.split("=")[1] : null;
+
+      if (!refreshToken) {
+        return next(ApiError.UnauthorizedError());
+      }
+
       const userData = await AuthService.refresh(refreshToken);
+
+      if (!userData) {
+        return next(ApiError.UnauthorizedError());
+      }
 
       res.cookie("refreshToken", userData.refreshToken, {
         httpOnly: true,
-        maxAge: 30 * 24 * 60 * 60 * 1000,
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 дней в милисекундах
       });
 
-      return res.json(userData);
+      res.json(userData);
     } catch (e) {
       next(e);
     }
   }
 
-  async registration(req, res, next) {
+  async registration(req: Request<any, any, IAuth>, res: Response, next: NextFunction): Promise<void> {
     try {
-      const errors = validationResult(req);
+      const errors = validationResult(req).array();
 
-      if (!errors.isEmpty()) {
-        return next(ApiError.BadRequest("Validation error", errors));
+      if (errors.length > 0) {
+        const errorMessages = errors.map(error => error.msg);
+        return next(ApiError.BadRequest("Validation error", errorMessages));
       }
 
       const { email, password } = req.body;
       const userData = await AuthService.registration(email, password);
 
-      return res.json(userData);
+      res.json(userData);
     } catch (e) {
       console.error("Registration error:", e);
       next(e);
     }
   }
 
-  async verify(req, res, next) {
+  async verify(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { verificationLink } = req.params;
       await AuthService.verify(verificationLink);
 
-      return res.redirect(`${process.env.CLIENT_MOBILE_URL}/--/login`);
+      res.redirect(`${process.env.CLIENT_MOBILE_URL}/--/login`);
     } catch (e) {
       next(e);
     }
   }
 
-  async forgotPassword(req, res, next) {
+  async forgotPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { email } = req.body;
       const userEmail = await AuthService.forgotPassword(email);
 
-      return res.json(userEmail ? `Check your email ${email}` : "User email is not correct");
+      res.json(userEmail ? `Check your email ${email}` : "User email is not correct");
     } catch (e) {
       next(e);
     }
   }
 
-  async createNewPassword(req, res, next) {
+  async createNewPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { createNewPasswordLink, email } = req.params;
 
-      return res.redirect(`${process.env.CLIENT_MOBILE_URL}/--/create-new-password/${createNewPasswordLink}/${email}`);
+      res.redirect(`${process.env.CLIENT_MOBILE_URL}/--/create-new-password/${createNewPasswordLink}/${email}`);
     } catch (e) {
       next(e);
     }
   }
 
-  async saveNewPassword(req, res, next) {
+  async saveNewPassword(
+    req: Request<{}, {}, IAuth>, 
+    res: Response, 
+    next: NextFunction
+  ): Promise<void> {
     try {
       const { password, email } = req.body;
-      const userData = await AuthService.saveNewPassword(email, password);
+
+      const userData: any | null = await AuthService.saveNewPassword(email, password);
+
+      if (!userData) {
+        return next(ApiError.BadRequest("User not found"));
+      }
 
       res.cookie("refreshToken", userData.refreshToken, {
         httpOnly: true,
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
 
-      return res.json(userData);
+      res.json(userData);
     } catch (e) {
       next(e);
     }
   }
 
-  async changePassword(req, res, next) {
+  async changePassword(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { userId, password, newPassword } = req.body;
       const user = await AuthService.changePassword(userId, password, newPassword);
 
       if (user) {
-        return res.json(user);
+        res.json(user);
       } else {
         throw ApiError.BadRequest("User not found");
       }
@@ -135,13 +157,13 @@ class AuthController {
     }
   }
 
-  async changeEmail(req, res, next) {
+  async changeEmail(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { userId, newEmail } = req.body;
       const user = await AuthService.changeEmail(userId, newEmail);
 
       if (user) {
-        return res.json(user);
+        res.json(user);
       } else {
         throw ApiError.BadRequest("User not found");
       }
@@ -150,14 +172,19 @@ class AuthController {
     }
   }
 
-  async me(req, res, next) {
+  async me(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const token = req.headers.authorization;
-      const accessToken = token.split(" ")[1];
+      const accessToken = token ? token.split(" ")[1] : null;
+
+      if (!accessToken) {
+        throw ApiError.UnauthorizedError();
+      }
+
       const user = await AuthService.me(accessToken);
 
       if (user) {
-        return res.json(user);
+        res.json(user);
       } else {
         throw ApiError.BadRequest("User not found");
       }
