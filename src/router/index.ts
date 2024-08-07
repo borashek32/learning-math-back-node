@@ -7,7 +7,7 @@ import AuthMiddleware from '../middleware/AuthMiddleware';
 const router = Router();
 
 router.get("/", (req, res) => {
-  res.status(200).json("Welcome, your app is working well");
+  res.status(200).json("Welcome,  your app is working well");
 });
 
 router.post(
