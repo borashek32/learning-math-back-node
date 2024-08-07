@@ -10,7 +10,6 @@ class AuthController {
     try {
       const { email, password } = req.body;
       const userData = await AuthService.login(email, password);
-      console.log(userData)
 
       const maxAge = 30 * 24 * 60 * 60 * 1000;
 
@@ -58,7 +57,7 @@ class AuthController {
 
       res.cookie("refreshToken", userData.refreshToken, {
         httpOnly: true,
-        maxAge: 30 * 24 * 60 * 60 * 1000,
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 дней в милисекундах
       });
 
       res.json(userData);
