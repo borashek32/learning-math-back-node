@@ -1,6 +1,6 @@
 {
   "name": "learning-math-back-node",
-  "type": "module",
+  "type": "commonjs",
   "version": "1.0.0",
   "description": "",
   "main": "index.ts",
